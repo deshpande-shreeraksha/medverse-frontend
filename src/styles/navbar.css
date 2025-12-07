@@ -1,0 +1,93 @@
+/* Navbar container */
+.navbar {
+  background: linear-gradient(to right, #003366, #005b99); /* Dark blue gradient */
+  padding: 0.5rem 1rem;
+  font-family: 'Segoe UI', sans-serif;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Brand logo + text */
+.navbar-brand {
+  font-size: 1.5rem;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand img {
+  height: 40px;
+  margin-right: 10px;
+}
+
+/* Navbar links */
+.navbar-nav .nav-link {
+  color: #ffffff;
+  font-weight: 500;
+  margin-right: 1rem;
+  transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: #ffcc00; /* Highlight color */
+}
+
+/* Hamburger / offcanvas trigger */
+.btn-outline-light {
+  border: none;
+  font-size: 1.4rem;
+  color: #ffffff;
+  background-color: transparent;
+}
+
+.btn-outline-light:hover {
+  color: #ffcc00;
+}
+
+/* Offcanvas menu styling */
+.offcanvas {
+  background-color: #f8f9fa;
+  width: 280px;
+  box-shadow: -2px 0 6px rgba(0, 0, 0, 0.1);
+}
+
+.offcanvas-header {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.offcanvas-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #003366;
+}
+
+.offcanvas-body ul li a {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #003366;
+  text-decoration: none;
+  padding: 0.5rem 0;
+  display: block;
+  transition: background 0.3s ease;
+}
+
+.offcanvas-body ul li a:hover {
+  background-color: #e9ecef;
+  border-radius: 4px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .navbar-nav .nav-link {
+    margin-right: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .navbar-brand {
+    font-size: 1.25rem;
+  }
+
+  .btn-outline-light {
+    font-size: 1.2rem;
+  }
+}

@@ -1,0 +1,38 @@
+.pharmacy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.medicine-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.medicine-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.medicine-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.cart-card {
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+  border: 1px solid #dee2e6;
+}
+
+.cart-card.sticky-top {
+  top: 100px; /* Adjust based on your navbar height */
+}
+
+.quantity-input {
+  width: 60px;
+  text-align: center;
+}

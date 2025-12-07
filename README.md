@@ -11,6 +11,11 @@ In the project directory, you can run:
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
+Note — Signup changes
+
+- The signup page now collects: `firstName`, `lastName`, `email`, `password`, and `confirm password`.
+- Password rules enforced on the client: minimum 8 characters, at least one uppercase character, and at least one special character (e.g. `!@#$%^&*`).
+
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 

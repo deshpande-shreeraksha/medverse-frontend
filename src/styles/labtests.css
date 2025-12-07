@@ -1,0 +1,137 @@
+/* Lab Tests Page Styling */
+
+.lab-tests-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.tests-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.test-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.test-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.test-card-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.test-card-header h5 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.test-card-header .badge {
+  font-size: 12px;
+  padding: 6px 10px;
+}
+
+.test-card-body {
+  padding: 15px;
+}
+
+.test-info p {
+  margin-bottom: 10px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.test-info strong {
+  color: #333;
+}
+
+/* Test Details Card */
+.test-details-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.test-details-card .card-header-custom {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.test-details-card .card-header-custom h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  margin-right: 20px;
+}
+
+.test-details-card .card-header-custom p {
+  font-size: 13px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.test-details-card .card-body-custom {
+  padding: 30px;
+}
+
+.test-details-card h6 {
+  color: #666;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.test-details-card p {
+  color: #333;
+  font-size: 15px;
+  margin-bottom: 0;
+}
+
+.test-details-card hr {
+  margin: 20px 0;
+  border: none;
+  border-top: 1px solid #e0e0e0;
+}
+
+.test-details-card .badge {
+  font-size: 14px;
+  padding: 8px 12px;
+}
+
+@media (max-width: 576px) {
+  .lab-tests-header {
+    flex-direction: column;
+  }
+
+  .tests-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .test-card {
+    margin: 0;
+  }
+}

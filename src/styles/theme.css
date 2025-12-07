@@ -1,0 +1,145 @@
+
+
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: 'Jost', sans-serif;
+  font-size: 18px;
+  background-color: #f8f9fa;
+  color: #333;
+  line-height: 1.6;
+}
+
+
+
+/* Hero Carousel */
+.carousel-item {
+  position: relative;
+  min-height: 70vh;
+  background-size: cover;
+  background-position: center;
+}
+
+
+
+
+.carousel-caption {
+  left: 50% !important;       /* force horizontal center */
+  right: auto !important;     /* remove Bootstrap's right anchor */
+  transform: translateX(-50%); /* keep centered */
+  text-align: center;
+  width: auto;                /* prevent stretching full width */
+}
+
+/* Optional: vertical centering */
+.carousel-caption.centered {
+  top: 45%;                   /* adjust upward from middle */
+  transform: translate(-50%, -50%);
+}
+
+
+.carousel-caption h1 {
+  font-size: 48px;
+  font-weight: 700;
+}
+
+.carousel-caption p {
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.btn-warning {
+  background-color: #c99c33;
+  border: none;
+  font-size: 18px;
+  padding: 10px 20px;
+  border-radius: 6px;
+}
+
+.btn-warning:hover {
+  background-color: #a67a29;
+}
+
+/* Service Cards */
+.card {
+  transition: transform 0.3s ease;
+  border-radius: 12px;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+}
+
+.card h5 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.card p {
+  font-size: 18px;
+  color: #555;
+}
+
+/* Counters */
+.counter-card {
+  background: #fff;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.counter-card:hover {
+  transform: translateY(-6px);
+}
+
+.counter-card h2 {
+  font-size: 32px;
+  color: #3d5654; /* teal accent */
+}
+
+.counter-card p {
+  font-size: 18px;
+  color: #666;
+}
+
+/* Footer */
+footer {
+  background-color: #3d5654;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+
+footer a {
+  color: #c99c33;
+  text-decoration: none;
+  margin: 0 10px;
+  transition: color 0.3s ease;
+}
+
+footer a:hover {
+  color: #fff;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .carousel-caption h1 {
+    font-size: 32px;
+  }
+  .carousel-caption p {
+    font-size: 18px;
+  }
+  .navbar .nav-link {
+    font-size: 16px;
+  }
+}

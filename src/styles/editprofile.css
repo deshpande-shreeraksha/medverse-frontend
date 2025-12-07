@@ -1,0 +1,108 @@
+/* EditProfile Styling */
+
+.edit-profile-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.edit-profile-card .card-header-custom {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px 25px;
+}
+
+.edit-profile-card .card-header-custom h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.edit-profile-card .card-header-custom p {
+  font-size: 14px;
+  opacity: 0.95;
+}
+
+.edit-profile-card .card-body-custom {
+  padding: 30px;
+}
+
+.edit-profile-card .form-group {
+  margin-bottom: 20px;
+}
+
+.edit-profile-card .form-label {
+  color: #333;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.edit-profile-card .form-control,
+.edit-profile-card .form-select {
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.edit-profile-card .form-control:focus,
+.edit-profile-card .form-select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+}
+
+.edit-profile-card .btn-save-profile {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 12px 30px;
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.edit-profile-card .btn-save-profile:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  color: white;
+}
+
+.edit-profile-card .alert {
+  border-radius: 8px;
+  border: none;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.edit-profile-card .alert-success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.edit-profile-card .alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+@media (max-width: 576px) {
+  .edit-profile-card {
+    margin: 0 15px;
+  }
+
+  .edit-profile-card .card-header-custom {
+    padding: 20px;
+  }
+
+  .edit-profile-card .card-header-custom h2 {
+    font-size: 24px;
+  }
+
+  .edit-profile-card .card-body-custom {
+    padding: 20px;
+  }
+}

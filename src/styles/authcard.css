@@ -1,0 +1,100 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  perspective: 1000px;
+  background: linear-gradient(135deg, #e3f2fd, #fce4ec);
+}
+
+.auth-card {
+  width: 360px;
+  height: 430px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.8s ease;
+}
+
+.auth-card.flipped {
+  transform: rotateY(180deg);
+}
+
+.auth-front, .auth-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  background: #fff;
+  padding: 22px;
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.2);
+}
+
+.auth-front h3, .auth-back h3 {
+  text-align: center;
+}
+
+.auth-back {
+  transform: rotateY(180deg);
+}
+
+.flip-link {
+  cursor: pointer;
+  text-decoration: underline;
+}
+.flip-link:hover {
+  opacity: 0.8;
+}
+
+/* Generic card styles used by Signup.js */
+.card-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  padding: 32px;
+  background: linear-gradient(135deg, #f8fafc, #fff);
+}
+
+.card-header {
+  width: 100%;
+  max-width: 760px;
+  margin-bottom: 12px;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #198754; /* bootstrap success green */
+  text-align: left;
+}
+
+.card-box {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 0; /* header sits above form */
+  border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  overflow: hidden;
+}
+
+.card-box .card-header {
+  width: 100%;
+  padding: 18px 22px;
+  background: linear-gradient(90deg, #1e7e34 0%, #2dbb6f 100%);
+  color: #fff;
+  text-align: center;
+  font-size: 1.3rem;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.card-box form {
+  width: 100%;
+  padding: 20px 22px 28px 22px;
+  box-sizing: border-box;
+}
+
+.card-container .row { gap: 12px; }
+
+.card-container label { font-weight: 600; }
+
+.card-container .text-danger { font-size: 0.85rem; }

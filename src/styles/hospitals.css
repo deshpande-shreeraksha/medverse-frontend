@@ -1,0 +1,60 @@
+/* Hospitals page styles */
+
+.city-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+  border-radius: 10px;
+}
+
+.city-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.hospital-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.hospital-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.hospital-card .card-img-top {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.hospital-card .card-body {
+  padding: 1.5rem;
+}
+
+.hospital-card .card-title {
+  color: #2c3e50;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.hospital-card .card-text {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.hospital-card strong {
+  color: #495057;
+  font-size: 0.85rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .hospital-card .card-body {
+    padding: 1rem;
+  }
+
+  .hospital-card .card-title {
+    font-size: 1.1rem;
+  }
+}

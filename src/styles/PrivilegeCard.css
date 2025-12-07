@@ -1,0 +1,134 @@
+/* Privilege Card Styling */
+.privilege-card {
+  border: 2px solid #007bff;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  max-width: 400px;
+  margin: 2rem auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.privilege-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-title {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.card-text {
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+}
+
+.list-group-item {
+  border: none;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.list-group-item:last-child {
+  border-bottom: none;
+}
+
+.card-footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #eee;
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+/* Form Styling */
+.privilege-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-label {
+  font-weight: 500;
+  color: #495057;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .privilege-card {
+    margin: 1rem;
+  }
+  
+  .privilege-form {
+    padding: 1.5rem;
+  }
+}
+
+/* Loading State */
+.loading-spinner {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 0.25rem solid rgba(0, 123, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #007bff;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Success Message */
+.alert-success {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  color: #155724;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+}
+
+/* File Input Styling */
+.custom-file-upload {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.custom-file-upload:hover {
+  background-color: #e9ecef;
+}
+
+/* Hide default file input */
+#idProof {
+  display: none;
+}
+
+/* File name display */
+.file-name {
+  margin-left: 1rem;
+  color: #6c757d;
+  font-size: 0.9rem;
+}

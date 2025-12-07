@@ -1,0 +1,149 @@
+/* BookAppointment Card Styling */
+
+.book-appointment-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.book-appointment-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Card Header */
+.card-header-custom {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px 25px;
+  border-bottom: none;
+}
+
+.card-header-custom h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.card-header-custom p {
+  font-size: 14px;
+  opacity: 0.95;
+  font-weight: 500;
+}
+
+/* Card Body */
+.card-body-custom {
+  padding: 30px;
+}
+
+/* Form Styling */
+.form-group {
+  margin-bottom: 22px;
+}
+
+.form-group .form-label {
+  color: #333;
+  font-size: 15px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.form-group .form-control,
+.form-group .form-select {
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group .form-control:focus,
+.form-group .form-select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+}
+
+.form-group .form-control:read-only {
+  background-color: #f8f9fa;
+  color: #666;
+}
+
+/* Alert Messages */
+.alert {
+  border-radius: 8px;
+  border: none;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Button Styling */
+.btn-confirm-appointment {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 12px 30px;
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-confirm-appointment:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  color: white;
+}
+
+.btn-confirm-appointment:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-confirm-appointment:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Small Text */
+.form-group small {
+  color: #999;
+  font-size: 13px;
+  display: block;
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+  .book-appointment-card {
+    margin: 0 15px;
+  }
+
+  .card-header-custom {
+    padding: 20px;
+  }
+
+  .card-header-custom h2 {
+    font-size: 24px;
+  }
+
+  .card-body-custom {
+    padding: 20px;
+  }
+
+  .btn-confirm-appointment {
+    padding: 10px 20px;
+    font-size: 15px;
+  }
+}

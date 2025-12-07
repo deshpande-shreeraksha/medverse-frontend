@@ -1,0 +1,47 @@
+/* Dashboard Styles */
+
+.dashboard-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 40px 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-header h1 {
+  color: white;
+  margin-bottom: 10px;
+}
+
+.dashboard-header p {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.action-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.action-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.action-card .btn-primary {
+  background-color: #667eea;
+  border-color: #667eea;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.list-group-item {
+  border-left: 4px solid #667eea;
+  transition: padding-left 0.3s ease;
+}
+
+.list-group-item:hover {
+  padding-left: 20px;
+  background-color: #f8f9fa;
+}
