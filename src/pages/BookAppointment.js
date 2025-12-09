@@ -2,6 +2,7 @@
 import React, { useState, useContext, useEffect, useMemo } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
+import { getApiUrl } from "../api";
 import { doctorsData } from "../data/doctors";
 import "../styles/bookappointment.css";
 
@@ -76,7 +77,7 @@ const BookAppointment = () => {
         setSlotsLoading(true);
         try {
           const res = await fetch(
-            `http://localhost:5000/api/appointments/booked-slots?doctorId=${selectedDoctor}&date=${date}`,
+            getApiUrl(`/api/appointments/booked-slots?doctorId=${selectedDoctor}&date=${date}`),
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -109,7 +110,7 @@ const BookAppointment = () => {
     setSpecialization(spec || "");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!token) {
@@ -136,47 +137,46 @@ const BookAppointment = () => {
       return;
     }
 
-    // --- Optimistic UI Update ---
+    // --- Send request and wait for response ---
     setLoading(true);
-    setMessage("✅ Appointment booked successfully!");
-    setTimeout(() => navigate("/dashboard"), 1200); // Redirect after a short delay
+    setMessage(""); // Clear any previous messages
 
-    // --- Send request in the background ---
-    (async () => {
-      try {
-        const doctor = doctorsData.find((d) => d.id.toString() === selectedDoctor);
-        const res = await fetch("http://localhost:5000/api/appointments", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            doctorId: selectedDoctor,
-            doctorName: doctor.name,
-            specialization: specialization,
-            mode,
-            date,
-            time,
-          }),
-        });
+    try {
+      const doctor = doctorsData.find((d) => d.id.toString() === selectedDoctor);
+      const res = await fetch(getApiUrl("/api/appointments"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          doctorId: selectedDoctor,
+          doctorName: doctor.name,
+          specialization: specialization,
+          mode,
+          date,
+          time,
+        }),
+      });
 
-        if (!res.ok) {
-          const data = await res.json();
-          const errorMessage = data.message || "Booking failed to sync. Please check your dashboard.";
-          // Store the error to be displayed on the next page
-          localStorage.setItem('bookingError', `❌ ${errorMessage}`);
-          console.error("❌ Background booking failed:", data);
-        } else {
-          const data = await res.json();
-          console.log("📦 Booking response:", data); // Log the response for debugging
-        }
-      } catch (err) {
-        console.error("❌ Background booking failed:", err);
-        // Store a generic network error message
-        localStorage.setItem('bookingError', '❌ A network error occurred. Please check your dashboard to confirm your appointment.');
+      if (!res.ok) {
+        const data = await res.json();
+        const errorMessage = data.message || data.errors?.[0]?.msg || "Booking failed. Please try again.";
+        setMessage(`❌ ${errorMessage}`);
+        setLoading(false);
+        console.error("❌ Booking failed:", data);
+      } else {
+        const data = await res.json();
+        setMessage("✅ Appointment booked successfully!");
+        setLoading(false);
+        console.log("📦 Booking response:", data);
+        setTimeout(() => navigate("/dashboard"), 1500); // Redirect after success message is shown
       }
-    })();
+    } catch (err) {
+      console.error("❌ Booking error:", err);
+      setMessage("❌ A network error occurred. Please check your connection and try again.");
+      setLoading(false);
+    }
   };
 
   // Do not render the form if there's no token, to prevent a flicker before redirect
@@ -302,7 +302,7 @@ const BookAppointment = () => {
               className="btn btn-confirm-appointment mt-4 w-100"
               disabled={loading}
             >
-              {loading ? "Booked!" : "Confirm Appointment"}
+              {loading ? "Booking..." : "Confirm Appointment"}
             </button>
           </form>
         </div>

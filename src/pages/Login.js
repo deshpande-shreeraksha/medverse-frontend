@@ -1,6 +1,7 @@
 // src/pages/Login.js
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../AuthContext";
+import { getApiUrl } from "../api";
 import { useNavigate, NavLink, useSearchParams, useLocation } from "react-router-dom";
 
 const Login = () => {
@@ -20,7 +21,7 @@ const Login = () => {
     setErrorMessage(""); setSuccessMessage("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch(getApiUrl("/api/auth/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -47,7 +48,7 @@ const Login = () => {
         // More helpful, actionable message when backend is unreachable
         const m = (err && err.message) ? err.message.toLowerCase() : '';
         if (m.includes('fetch') || m.includes('connect') || m.includes('network')) {
-          setErrorMessage(`Unable to contact backend at http://localhost:5000 — is the server running? (${err.message})`);
+          setErrorMessage(`Unable to contact backend — is the server running? (${err.message})`);
         } else {
           setErrorMessage((err && err.message) ? `Server error: ${err.message}` : 'Server error');
         }

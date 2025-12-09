@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../AuthContext";
 import { useNavigate, NavLink } from "react-router-dom";
+import { getApiUrl } from "../api";
 import "../styles/authcard.css"; // or AuthCard.css if using flip-card
 
 const Signup = () => {
@@ -9,6 +10,9 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("patient");
+  const [doctorId, setDoctorId] = useState("");
+  const [doctorIdError, setDoctorIdError] = useState("");
 
   const navigate = useNavigate();
   const { setToken, setUser } = useContext(AuthContext);
@@ -100,16 +104,32 @@ const Signup = () => {
       setConfirmError("");
     }
 
+    // doctorId validation when role is doctor
+    if (role === "doctor") {
+      const re = /^\d{5}$/;
+      if (!re.test(doctorId)) {
+        setDoctorIdError("❌ Doctor ID must be exactly 5 digits");
+        valid = false;
+      } else {
+        setDoctorIdError("");
+      }
+    } else {
+      setDoctorIdError("");
+    }
+
     if (!valid) return;
     // continue signup logic - call backend
     (async () => {
       try {
         setServerError("");
         setIsSubmitting(true);
-        const res = await fetch("http://localhost:5000/api/auth/signup", {
+        const payload = { firstName, lastName, email, password, role };
+        if (role === "doctor") payload.doctorId = doctorId;
+
+        const res = await fetch(getApiUrl("/api/auth/signup"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ firstName, lastName, email, password }),
+          body: JSON.stringify(payload),
         });
         const data = await res.json();
         if (res.ok) {
@@ -144,7 +164,7 @@ const Signup = () => {
         // Detect a network/connectivity error and give actionable guidance
         const m = (err && err.message) ? err.message.toLowerCase() : '';
         if (m.includes('fetch') || m.includes('connect') || m.includes('network')) {
-          setServerError(`Unable to contact backend at http://localhost:5000 — is the server running? (${err.message})`);
+          setServerError(`Unable to contact backend — is the server running? (${err.message})`);
         } else {
           setServerError(`Server error while signing up${err && err.message ? ': ' + err.message : ''}`);
         }
@@ -213,6 +233,39 @@ const Signup = () => {
             />
             {emailError && <small className="text-danger">{emailError}</small>}
           </div>
+
+          <div className="mb-3">
+            <label>Account type</label>
+            <select className="form-select" value={role} onChange={(e) => setRole(e.target.value)}>
+              <option value="patient">Patient</option>
+              <option value="doctor">Doctor</option>
+            </select>
+          </div>
+
+          {role === "doctor" && (
+            <div className="mb-3">
+              <label>Doctor ID / License</label>
+              <input
+                type="text"
+                className="form-control"
+                value={doctorId}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  // Allow only digits in input
+                  const cleaned = val.replace(/[^0-9]/g, "");
+                  setDoctorId(cleaned);
+                  if (cleaned && !/^\d{5}$/.test(cleaned)) {
+                    setDoctorIdError("❌ Doctor ID must be exactly 5 digits");
+                  } else {
+                    setDoctorIdError("");
+                  }
+                }}
+                placeholder="Enter your 5-digit doctor ID"
+                required
+              />
+              {doctorIdError && <small className="text-danger">{doctorIdError}</small>}
+            </div>
+          )}
 
           {/* Password Field */}
         <div className="mb-3">

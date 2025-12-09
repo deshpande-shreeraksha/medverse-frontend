@@ -2,6 +2,7 @@
 import React, { useState, useRef, useContext } from "react";
 import * as htmlToImage from 'html-to-image';
 import { AuthContext } from "../AuthContext";
+import { getApiUrl } from "../api";
 
 const PrivilegeCard = () => {
   const [formData, setFormData] = useState({
@@ -70,7 +71,7 @@ const PrivilegeCard = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/privilege-card", {
+      const res = await fetch(getApiUrl("/api/privilege-card"), {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,

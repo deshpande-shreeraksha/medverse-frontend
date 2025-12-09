@@ -57,6 +57,7 @@ function App() {
         {/* Protected routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          {/* Doctor portal removed */}
           <Route path="/book-appointment" element={<BookAppointment />} /> {/* For generic booking */}
           <Route path="/book-appointment/:doctorId" element={<BookAppointment />} /> {/* For specific doctor */}
           <Route path="/medical-records" element={<MedicalRecords />} />

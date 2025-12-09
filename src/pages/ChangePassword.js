@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
+import { getApiUrl } from "../api";
 import "../styles/changepassword.css";
 
 const ChangePassword = () => {
@@ -47,7 +48,7 @@ const ChangePassword = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/users/change-password", {
+      const res = await fetch(getApiUrl("/api/users/change-password"), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
+import { getApiUrl } from "../api";
 import HeroCarousel from "../components/HeroCarousel";
 import ServiceCard from "../components/ServiceCard";
 import Counter from "../components/Counter";
@@ -9,6 +10,20 @@ const Home = () => {
   const { token, user } = useContext(AuthContext);
   const [upcomingAppointment, setUpcomingAppointment] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+  // Determine logged-in user from context or localStorage (important for post-signup updates)
+  const currentUser = user || (() => {
+    try {
+      const raw = localStorage.getItem('authUser');
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) {
+      return null;
+    }
+  })();
+  
+  // determine if the current user is a doctor (from context or persisted auth)
+  const isDoctor = (currentUser && currentUser.role === "doctor") || false;
 
   useEffect(() => {
     const fetchUpcomingAppointment = async () => {
@@ -18,7 +33,7 @@ const Home = () => {
       }
 
       try {
-        const res = await fetch("http://localhost:5000/api/appointments", {
+        const res = await fetch(getApiUrl("/api/appointments"), {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
@@ -46,15 +61,15 @@ const Home = () => {
 
   return (
     <main>
-      {/* Hero Banner Carousel */}
-      <HeroCarousel />
+      {/* Hero Banner Carousel - hide for doctors */}
+      {!isDoctor && <HeroCarousel />}
 
       {/* CTA Banner - show signup link or a greeting when logged in */}
       <div className="container my-4">
         <div className="alert alert-primary text-center py-4 shadow-sm" role="alert">
-          {user ? (
+          {currentUser ? (
             <>
-              <h4 className="mb-2">Welcome back, {user.firstName} {user.lastName} 👋</h4>
+              <h4 className="mb-2">Welcome back, {currentUser.firstName} {currentUser.lastName} 👋</h4>
               <p className="mb-3">Good to see you — manage your appointments and records from your dashboard.</p>
               <NavLink to="/dashboard" className="btn btn-dark btn-lg">Go to Dashboard</NavLink>
             </>

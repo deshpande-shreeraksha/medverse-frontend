@@ -28,7 +28,7 @@ Before you begin, ensure you have the following installed:
 
 1.  **Clone the repository** (if you haven't already):
     ```sh
-    git clone <your-repository-url>/medverse-frontend.git
+    git clone https://github.com/deshpande-shreeraksha/medverse-frontend.git
     cd medverse-frontend
     ```
 
@@ -112,8 +112,8 @@ If you are setting up this repository for the first time from an existing local 
     ```
 
 4.  **Link to the remote repository and push**:
-    Replace `<your-repository-url>` with the URL of your new empty repository on GitHub, GitLab, etc.
+    Replace `https://github.com/deshpande-shreeraksha/medverse-frontend.git` with the URL of your new empty repository on GitHub, GitLab, etc.
     ```sh
-    git remote add origin <your-repository-url>
+    git remote add origin https://github.com/deshpande-shreeraksha/medverse-frontend.git
     git push -u origin main
     ```

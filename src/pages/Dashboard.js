@@ -77,12 +77,13 @@ const Dashboard = () => {
 
   const fetchAppointments = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/appointments", {
+      const res = await fetch(getApiUrl("/api/appointments"), {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       if (res.ok) {
         const data = await res.json();
-        setAppointments(data);
+        // Backend returns { appointments, currentPage, totalPages, totalAppointments }
+        setAppointments(data.appointments || []);
       }
     } catch (err) {
       console.error("Failed to fetch appointments:", err);
@@ -93,7 +94,7 @@ const Dashboard = () => {
 
   const fetchMedicalRecords = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/medical-records", {
+      const res = await fetch(getApiUrl("/api/medical-records"), {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       if (res.ok) {
@@ -107,7 +108,7 @@ const Dashboard = () => {
 
   const fetchLabTests = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/lab-tests", {
+      const res = await fetch(getApiUrl("/api/lab-tests"), {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       if (res.ok) {
@@ -121,7 +122,7 @@ const Dashboard = () => {
 
   const fetchPrivilegeCard = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/privilege-card/me", {
+      const res = await fetch(getApiUrl("/api/privilege-card/me"), {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       if (res.ok) {
@@ -146,7 +147,7 @@ const Dashboard = () => {
     if (!appointmentToCancel) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/appointments/${appointmentToCancel}/cancel`, {
+      const res = await fetch(getApiUrl(`/api/appointments/${appointmentToCancel}/cancel`), {
         method: 'PATCH', // Using PATCH to update the status
         headers: {
           'Authorization': `Bearer ${authToken}`,
@@ -346,18 +347,24 @@ const Dashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {appointments.map((apt) => (
+                    {appointments.map((apt) => {
+                      // Format the startAt date to display properly
+                      const appointmentDate = new Date(apt.startAt);
+                      const formattedDate = appointmentDate.toLocaleDateString('en-IN');
+                      const formattedTime = appointmentDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+                      
+                      return (
                       <tr key={apt._id}>
                         <td className="fw-bold">{apt.doctorName}</td>
                         <td>{apt.specialization}</td>
                         <td>
-                          {apt.date} at {apt.time}
+                          {formattedDate} at {formattedTime}
                         </td>
                         <td>{apt.mode}</td>
                         <td>
                           <span
                             className={`badge ${
-                              apt.status === "Confirmed"
+                              apt.status === "Scheduled"
                                 ? "bg-success"
                                 : apt.status === "Completed"
                                 ? "bg-info"
@@ -388,7 +395,8 @@ const Dashboard = () => {
                           </div>
                         </td>
                       </tr>
-                    ))}
+                    );
+                    })}
                   </tbody>
                 </table>
               </div>

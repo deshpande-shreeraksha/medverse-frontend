@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
+import { getApiUrl } from "../api";
 import "../styles/editprofile.css";
 
 const EditProfile = () => {
@@ -41,7 +42,7 @@ const EditProfile = () => {
     setMessage(""); // don’t show error until we know it failed
 
     try {
-      const res = await fetch("http://localhost:5000/api/users/me", {
+      const res = await fetch(getApiUrl("/api/users/me"), {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authToken}`, // IMPORTANT: include Bearer
@@ -97,7 +98,7 @@ const EditProfile = () => {
     setMessage(""); // clear old messages
 
     try {
-      const res = await fetch("http://localhost:5000/api/users/me", {
+      const res = await fetch(getApiUrl("/api/users/me"), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

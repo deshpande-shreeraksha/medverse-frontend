@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import * as htmlToImage from "html-to-image";
 import { AuthContext } from "../AuthContext";
+import { getApiUrl } from "../api";
 import "../styles/labtests.css";
 
 const LabTests = () => {
@@ -24,7 +25,7 @@ const LabTests = () => {
 
   const fetchLabTests = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/lab-tests", {
+      const res = await fetch(getApiUrl("/api/lab-tests"), {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       if (res.ok) {

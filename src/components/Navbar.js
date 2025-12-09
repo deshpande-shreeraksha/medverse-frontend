@@ -8,6 +8,17 @@ import "../styles/navbar.css"; // custom styles
 const Navbar = () => {
   const navigate = useNavigate();
   const { token, user, setToken, setUser } = useContext(AuthContext);
+  // Determine role from context user or stored authUser
+  let role = user && user.role ? user.role : null;
+  if (!role) {
+    try {
+      const stored = localStorage.getItem('authUser');
+      if (stored) {
+        const su = JSON.parse(stored);
+        role = su.role || role;
+      }
+    } catch {}
+  }
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
@@ -96,63 +107,65 @@ const Navbar = () => {
           <div className="collapse navbar-collapse" id="mainNav">
             <ul className="navbar-nav ms-auto">
               
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/doctors">Doctors</NavLink>
-              </li>
+              {/* Unified nav for all users (doctor portal removed) */}
+              <>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/doctors">Doctors</NavLink>
+                </li>
 
-              {/* Hospitals Dropdown */}
-              <li className="nav-item dropdown">
-                <button
-                  className="nav-link dropdown-toggle btn btn-link p-0"
-                  type="button"
-                  id="hospitalDropdown"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  Hospitals
-                </button>
-                <ul className="dropdown-menu" aria-labelledby="hospitalDropdown">
-                  <li><NavLink className="dropdown-item" to="/hospitals/bengaluru">Bengaluru</NavLink></li>
-                  <li><NavLink className="dropdown-item" to="/hospitals/mysuru">Mysuru</NavLink></li>
-                  <li><NavLink className="dropdown-item" to="/hospitals/mangaluru">Mangaluru</NavLink></li>
-                  <li><NavLink className="dropdown-item" to="/hospitals/goa">Goa</NavLink></li>
-                  <li><NavLink className="dropdown-item" to="/hospitals/delhi">Delhi</NavLink></li>
-                  <li><NavLink className="dropdown-item" to="/hospitals/gurugram">Gurugram</NavLink></li>
-                  <li><NavLink className="dropdown-item" to="/hospitals/pune">Pune</NavLink></li>
-                  <li><NavLink className="dropdown-item" to="/hospitals/kolkata">Kolkata</NavLink></li>
-                  <li><NavLink className="dropdown-item" to="/hospitals/jaipur">Jaipur</NavLink></li>
-                  <li><NavLink className="dropdown-item" to="/hospitals/vijayawada">Vijayawada</NavLink></li>
-                </ul>
-              </li>
+                {/* Hospitals Dropdown */}
+                <li className="nav-item dropdown">
+                  <button
+                    className="nav-link dropdown-toggle btn btn-link p-0"
+                    type="button"
+                    id="hospitalDropdown"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Hospitals
+                  </button>
+                  <ul className="dropdown-menu" aria-labelledby="hospitalDropdown">
+                    <li><NavLink className="dropdown-item" to="/hospitals/bengaluru">Bengaluru</NavLink></li>
+                    <li><NavLink className="dropdown-item" to="/hospitals/mysuru">Mysuru</NavLink></li>
+                    <li><NavLink className="dropdown-item" to="/hospitals/mangaluru">Mangaluru</NavLink></li>
+                    <li><NavLink className="dropdown-item" to="/hospitals/goa">Goa</NavLink></li>
+                    <li><NavLink className="dropdown-item" to="/hospitals/delhi">Delhi</NavLink></li>
+                    <li><NavLink className="dropdown-item" to="/hospitals/gurugram">Gurugram</NavLink></li>
+                    <li><NavLink className="dropdown-item" to="/hospitals/pune">Pune</NavLink></li>
+                    <li><NavLink className="dropdown-item" to="/hospitals/kolkata">Kolkata</NavLink></li>
+                    <li><NavLink className="dropdown-item" to="/hospitals/jaipur">Jaipur</NavLink></li>
+                    <li><NavLink className="dropdown-item" to="/hospitals/vijayawada">Vijayawada</NavLink></li>
+                  </ul>
+                </li>
 
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/pharmacy">Pharmacy</NavLink>
-              </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/pharmacy">Pharmacy</NavLink>
+                </li>
 
-              {/* Patient Services Dropdown */}
-              <li className="nav-item dropdown">
-                <button
-                  className="nav-link dropdown-toggle btn btn-link p-0"
-                  type="button"
-                  id="patientDropdown"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  Patient Services
-                </button>
-                <ul className="dropdown-menu" aria-labelledby="patientDropdown">
-                  
-                  <li><NavLink className="dropdown-item" to="/services">Centre of Excellence</NavLink></li>
-                  <li><NavLink className="dropdown-item" to="/inpatient-deposit">In‑Patient Deposit</NavLink></li>
-                  <li><NavLink className="dropdown-item" to="/pharmacy">Pharmacy</NavLink></li>
-                  <li><NavLink className="dropdown-item" to="/international-patients">International Patients</NavLink></li>
-                  <li><NavLink className="dropdown-item" to="/privilege-card">Privilege Card</NavLink></li>
-                </ul>
-              </li>
+                {/* Patient Services Dropdown */}
+                <li className="nav-item dropdown">
+                  <button
+                    className="nav-link dropdown-toggle btn btn-link p-0"
+                    type="button"
+                    id="patientDropdown"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Patient Services
+                  </button>
+                  <ul className="dropdown-menu" aria-labelledby="patientDropdown">
+                    <li><NavLink className="dropdown-item" to="/services">Centre of Excellence</NavLink></li>
+                    <li><NavLink className="dropdown-item" to="/inpatient-deposit">In‑Patient Deposit</NavLink></li>
+                    <li><NavLink className="dropdown-item" to="/pharmacy">Pharmacy</NavLink></li>
+                    <li><NavLink className="dropdown-item" to="/international-patients">International Patients</NavLink></li>
+                    <li><NavLink className="dropdown-item" to="/privilege-card">Privilege Card</NavLink></li>
+                  </ul>
+                </li>
 
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/contact">Contact</NavLink>
-              </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/contact">Contact</NavLink>
+                </li>
+              </>
 
               {/* 🔹 Auth Section */}
               {token || localStorage.getItem("authToken") ? (

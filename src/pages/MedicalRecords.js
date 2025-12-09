@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
+import { getApiUrl } from "../api";
 import { Tabs, Tab, Modal } from "react-bootstrap";
 import "../styles/medicalrecords.css";
 
@@ -27,7 +28,7 @@ const MedicalRecords = ({ isModal = false, onHide }) => {
 
   const fetchMedicalRecords = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/medical-records", {
+      const res = await fetch(getApiUrl("/api/medical-records"), {
         headers: { "Authorization": `Bearer ${authToken}` },
       });
       if (res.ok) {
