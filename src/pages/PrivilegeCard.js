@@ -1,6 +1,7 @@
 // In PrivilegeCard.js
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import * as htmlToImage from 'html-to-image';
+import { AuthContext } from "../AuthContext";
 
 const PrivilegeCard = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ const PrivilegeCard = () => {
   const [submittedCard, setSubmittedCard] = useState(null);
   const [submittedEmails, setSubmittedEmails] = useState([]);
   const cardRef = useRef(null);
+  const { token } = useContext(AuthContext);
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
@@ -68,8 +70,11 @@ const PrivilegeCard = () => {
     }
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_BASE}/api/privilege-card`, {
+      const res = await fetch("http://localhost:5000/api/privilege-card", {
         method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
         body: formDataToSend,
       });
 

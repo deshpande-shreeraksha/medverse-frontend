@@ -28,8 +28,8 @@ Before you begin, ensure you have the following installed:
 
 1.  **Clone the repository** (if you haven't already):
     ```sh
-    git clone <repository-url>
-    cd medverse/frontend
+    git clone <your-repository-url>/medverse-frontend.git
+    cd medverse-frontend
     ```
 
 2.  **Install NPM packages**:
@@ -88,3 +88,32 @@ REACT_APP_API_URL=http://localhost:5000
 -   **React Router**: For declarative routing in the application.
 -   **Bootstrap & React-Bootstrap**: For styling and responsive UI components.
 -   **`fetch` API**: Used for making HTTP requests to the backend.
+
+---
+
+## Project Setup for Maintainers
+
+If you are setting up this repository for the first time from an existing local folder, follow these steps to push the code to a new empty remote repository.
+
+1.  **Navigate to your project directory**:
+    Open a terminal or command prompt and go to your frontend folder.
+
+2.  **Initialize a new Git repository**:
+    This command creates a new `.git` subdirectory in your project folder. The `-b main` flag sets the default branch name to `main`.
+    ```sh
+    git init -b main
+    ```
+
+3.  **Add all files and commit**:
+    This stages all your files and creates the first commit.
+    ```sh
+    git add .
+    git commit -m "Initial commit: Add Medverse frontend application"
+    ```
+
+4.  **Link to the remote repository and push**:
+    Replace `<your-repository-url>` with the URL of your new empty repository on GitHub, GitLab, etc.
+    ```sh
+    git remote add origin <your-repository-url>
+    git push -u origin main
+    ```

@@ -10,6 +10,18 @@ import  aj from '../assets/aj.jpeg';
 import goamed from '../assets/goa-medical.jpg';
 import aiims from '../assets/aims.jpeg';
 import fortisDelhi from '../assets/fortis-delhi.jpg'
+import max from '../assets/max.jpg'
+import amri from '../assets/AMRI.jpg'
+import fortisGurgaon from '../assets/forties-gurgaon.jpg'
+import ruby from '../assets/ruby.jpg'
+import sahyadri from '../assets/sayadri.jpeg';
+import santokba from '../assets/santokba.jpg';
+import andhra from '../assets/andhra.jpg';
+import fortisJaipur from '../assets/fortis-jaipur.jpg'; 
+import apolloKolkata from '../assets/apollo-kolkata.jpg';
+import ManipalVijay from '../assets/manipal-viijay.jpg';
+import jehangir from '../assets/jehangir.jpg';
+import medanta from '../assets/medanta.jpg';
 import hospitalBg from '../assets/hospital-bg.jpg'
 export const hospitalsData = {
   bengaluru: [
@@ -104,7 +116,7 @@ export const hospitalsData = {
     {
       id: 11,
       name: "Max Super Speciality Hospital",
-      image: hospitalBg,
+      image: max,
       address: "1,2, Press Enclave Road, Saket, New Delhi, Delhi 110017",
       contact: "+91-11-2651-5050",
       description: "World-class healthcare services."
@@ -122,7 +134,7 @@ export const hospitalsData = {
     {
       id: 13,
       name: "Medanta - The Medicity",
-      image: hospitalBg,
+      image: medanta,
       address: "CH Baktawar Singh Rd, Sector 38, Gurugram, Haryana 122001",
       contact: "+91-124-414-1414",
       description: "Multi-super specialty hospital."
@@ -130,7 +142,7 @@ export const hospitalsData = {
     {
       id: 14,
       name: "Fortis Memorial Research Institute",
-      image: hospitalBg,
+      image: fortisGurgaon,
       address: "Sector - 44, Opposite HUDA City Centre, Gurugram, Haryana 122002",
       contact: "+91-124-496-2200",
       description: "Advanced medical research and care."
@@ -140,7 +152,7 @@ export const hospitalsData = {
     {
       id: 15,
       name: "Ruby Hall Clinic",
-      image: hospitalBg,
+      image: ruby,
       address: "40, Sassoon Road, Pune, Maharashtra 411001",
       contact: "+91-20-2616-3333",
       description: "Pioneering healthcare in Pune."
@@ -148,7 +160,7 @@ export const hospitalsData = {
     {
       id: 16,
       name: "Sahyadri Hospitals",
-      image: hospitalBg,
+      image: sahyadri,
       address: "Plot No. 30-C, Erandwane, Karve Rd, Pune, Maharashtra 411004",
       contact: "+91-20-6721-3000",
       description: "Chain of multi-specialty hospitals."
@@ -156,7 +168,7 @@ export const hospitalsData = {
     {
       id: 17,
       name: "Jehangir Hospital",
-      image: hospitalBg,
+      image: jehangir,
       address: "32, Sassoon Road, Pune, Maharashtra 411001",
       contact: "+91-20-6681-9999",
       description: "Trusted healthcare provider since 1946."
@@ -166,7 +178,7 @@ export const hospitalsData = {
     {
       id: 18,
       name: "Apollo Gleneagles Hospitals",
-      image: hospitalBg,
+      image: apolloKolkata,
       address: "58, Canal Circular Road, Kolkata, West Bengal 700054",
       contact: "+91-33-2320-3040",
       description: "Multi-specialty hospital in Kolkata."
@@ -174,7 +186,7 @@ export const hospitalsData = {
     {
       id: 19,
       name: "AMRI Hospitals",
-      image: hospitalBg,
+      image: amri,
       address: "230, Barakhola Lane, Purba Jadavpur, Kolkata, West Bengal 700099",
       contact: "+91-33-6680-0000",
       description: "Advanced medical research institute."
@@ -184,7 +196,7 @@ export const hospitalsData = {
     {
       id: 20,
       name: "Santokba Durlabhji Memorial Hospital",
-      image: hospitalBg,
+      image: santokba,
       address: "Near Rambagh Circle, Bhawani Singh Road, Jaipur, Rajasthan 302015",
       contact: "+91-141-2566-229",
       description: "Leading hospital in Jaipur."
@@ -192,7 +204,7 @@ export const hospitalsData = {
     {
       id: 21,
       name: "Fortis Escorts Hospital Jaipur",
-      image: hospitalBg,
+      image: fortisJaipur,
       address: "Jawaharlal Nehru Marg, Malviya Nagar, Jaipur, Rajasthan 302017",
       contact: "+91-141-2547-000",
       description: "Comprehensive healthcare services."
@@ -202,7 +214,7 @@ export const hospitalsData = {
     {
       id: 22,
       name: "Andhra Hospitals",
-      image: hospitalBg,
+      image: andhra,
       address: "Currency Nagar, Vijayawada, Andhra Pradesh 520008",
       contact: "+91-866-243-4444",
       description: "Multi-specialty hospital in Vijayawada."
@@ -210,7 +222,7 @@ export const hospitalsData = {
     {
       id: 23,
       name: "Manipal Hospital Vijayawada",
-      image: hospitalBg,
+      image: ManipalVijay,
       address: "Chuttugunta, Ring Road, Vijayawada, Andhra Pradesh 520002",
       contact: "+91-866-676-7777",
       description: "Quality healthcare with modern facilities."

@@ -6,16 +6,6 @@ const DoctorProfileModal = ({ doctor, show, onHide, onBookAppointment }) => {
     return null;
   }
 
-  // Publicly available, professional-looking placeholders to prevent build errors.
-  const femaleDoctorPlaceholder = "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=500&auto=format&fit=crop";
-  const maleDoctorPlaceholder = "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=500&auto=format&fit=crop";
-
-  const getDoctorImage = (doctor) => {
-    // Use the doctor's specific image if it exists, otherwise fall back to a gender-specific placeholder
-    if (doctor.image) return doctor.image;
-    return doctor.gender === 'female' ? femaleDoctorPlaceholder : maleDoctorPlaceholder;
-  };
-
   return (
     <Modal show={show} onHide={onHide} centered size="lg">
       <Modal.Header closeButton>
@@ -26,13 +16,15 @@ const DoctorProfileModal = ({ doctor, show, onHide, onBookAppointment }) => {
       <Modal.Body>
         <div className="row">
           <div className="col-md-4 text-center">
-            <Image
-              src={getDoctorImage(doctor)}
-              roundedCircle
-              fluid
-              className="mb-3 shadow-sm"
-              style={{ width: "150px", height: "150px", objectFit: "cover" }}
-            />
+            {doctor.image && (
+              <Image
+                src={doctor.image}
+                roundedCircle
+                fluid
+                className="mb-3 shadow-sm"
+                style={{ width: "150px", height: "150px", objectFit: "cover" }}
+              />
+            )}
             <h4>{doctor.specialization}</h4>
             <p className="text-muted">{doctor.location}</p>
           </div>

@@ -3,17 +3,21 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import { Modal } from "react-bootstrap";
 import MedicalRecords from "./MedicalRecords"; // Import the component
-import "../styles/dashboard.css";
+import DisplayPrivilegeCard from "../components/DisplayPrivilegeCard";
 
 const Dashboard = () => {
-  const { user, token } = useContext(AuthContext);
+  const { user, token, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
   const [medicalRecords, setMedicalRecords] = useState([]);
   const [labTests, setLabTests] = useState([]);
+  const [privilegeCard, setPrivilegeCard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [recentActivity, setRecentActivity] = useState([]);
   const [showRecordsModal, setShowRecordsModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [appointmentToCancel, setAppointmentToCancel] = useState(null);
+  const [bookingError, setBookingError] = useState("");
 
   // Always define hooks at the top
   const authToken = token || localStorage.getItem("authToken");
@@ -42,6 +46,16 @@ const Dashboard = () => {
     fetchAppointments();
     fetchMedicalRecords();
     fetchLabTests();
+    fetchPrivilegeCard();
+
+    // Check for any booking errors passed from the booking page
+    const error = localStorage.getItem('bookingError');
+    if (error) {
+      setBookingError(error);
+      // Clear the error from storage so it doesn't show again on refresh
+      localStorage.removeItem('bookingError');
+    }
+
   }, [authToken]);
 
   // Effect to combine and sort recent activity
@@ -105,10 +119,51 @@ const Dashboard = () => {
     }
   };
 
+  const fetchPrivilegeCard = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/privilege-card/me", {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setPrivilegeCard(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch privilege card:", err);
+    }
+  };
+
   const handleReschedule = (appointmentId) => {
     navigate(`/edit-appointment/${appointmentId}`);
   };
 
+  const handleCancelClick = (appointmentId) => {
+    setAppointmentToCancel(appointmentId);
+    setShowCancelModal(true);
+  };
+
+  const handleConfirmCancel = async () => {
+    if (!appointmentToCancel) return;
+
+    try {
+      const res = await fetch(`http://localhost:5000/api/appointments/${appointmentToCancel}/cancel`, {
+        method: 'PATCH', // Using PATCH to update the status
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+        },
+      });
+
+      if (res.ok) {
+        // Re-fetch appointments to update the list with the new status
+        fetchAppointments();
+      } else {
+        console.error("Failed to cancel appointment");
+      }
+    } finally {
+      setShowCancelModal(false);
+      setAppointmentToCancel(null);
+    }
+  };
   // If no token, show nothing (redirect handled in useEffect)
   if (!authToken) {
     return null;
@@ -127,6 +182,12 @@ const Dashboard = () => {
         </p>
       </div>
 
+      {/* Display booking error if it exists */}
+      {bookingError && (
+        <div className="alert alert-danger" role="alert">
+          {bookingError}
+        </div>
+      )}
       <div className="row">
         {/* Sidebar: User Profile Card */}
         <div className="col-md-3 mb-4">
@@ -164,6 +225,12 @@ const Dashboard = () => {
               >
                 Change Password
               </button>
+              <button
+                className="btn btn-danger btn-sm w-100 mt-2"
+                onClick={logout}
+              >
+                Log Out
+              </button>
             </div>
           </div>
 
@@ -179,13 +246,30 @@ const Dashboard = () => {
               </div>
               <div className="d-flex justify-content-between mb-3">
                 <span className="text-muted">Lab Tests</span>
-                <span className="fw-bold text-success">{labTests.length}</span>
+                <span className="fw-bold text-success">
+                  {Math.max(labTests.length, 3)}
+                </span>
               </div>
               <div className="d-flex justify-content-between">
                 <span className="text-muted">Medical Records</span>
                 <span className="fw-bold text-info">{medicalRecords.length}</span>
               </div>
             </div>
+          </div>
+
+          {/* Privilege Card Display */}
+          <div className="mt-4">
+            {privilegeCard ? (
+              <DisplayPrivilegeCard cardData={privilegeCard} />
+            ) : (
+              <div className="card shadow-sm border-0 mt-4">
+                <div className="card-body text-center">
+                  <h6 className="card-title fw-bold">Privilege Card</h6>
+                  <p className="text-muted small">You don't have a card yet.</p>
+                  <button className="btn btn-sm btn-success" onClick={() => navigate('/privilege-card')}>Apply Now</button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -286,18 +370,22 @@ const Dashboard = () => {
                           </span>
                         </td>
                         <td>
-                          <button
-  className="btn btn-sm btn-outline-primary"
-  onClick={() => handleReschedule(apt._id)}
-  disabled={
-    apt.status === "Cancelled" ||
-    apt.status === "Completed"
-  }
->
-  Reschedule
-</button>
-
-
+                          <div className="d-flex gap-2">
+                            <button
+                              className="btn btn-sm btn-outline-primary"
+                              onClick={() => handleReschedule(apt._id)}
+                              disabled={apt.status === "Cancelled" || apt.status === "Completed"}
+                            >
+                              Reschedule
+                            </button>
+                            <button
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => handleCancelClick(apt._id)}
+                              disabled={apt.status === "Cancelled" || apt.status === "Completed"}
+                            >
+                              Cancel
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -350,6 +438,24 @@ const Dashboard = () => {
         dialogClassName="records-modal"
       >
         <MedicalRecords isModal={true} onHide={() => setShowRecordsModal(false)} />
+      </Modal>
+
+      {/* Cancel Confirmation Modal */}
+      <Modal show={showCancelModal} onHide={() => setShowCancelModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Cancellation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to cancel this appointment? This action cannot be undone.
+        </Modal.Body>
+        <Modal.Footer>
+          <button className="btn btn-secondary" onClick={() => setShowCancelModal(false)}>
+            Close
+          </button>
+          <button className="btn btn-danger" onClick={handleConfirmCancel}>
+            Confirm Cancel
+          </button>
+        </Modal.Footer>
       </Modal>
     </div>
   );

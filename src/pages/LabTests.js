@@ -4,43 +4,11 @@ import * as htmlToImage from "html-to-image";
 import { AuthContext } from "../AuthContext";
 import "../styles/labtests.css";
 
-const sampleTests = [
-  {
-    _id: '1',
-    testName: 'Complete Blood Count (CBC)',
-    testDate: '2023-10-15',
-    resultDate: '2023-10-16',
-    status: 'Completed',
-    result: 'Within normal limits',
-    normalRange: 'Varies by component',
-    notes: 'Patient shows healthy blood cell levels. No signs of infection or anemia.'
-  },
-  {
-    _id: '2',
-    testName: 'Lipid Panel',
-    testDate: '2023-10-15',
-    resultDate: '2023-10-17',
-    status: 'Abnormal',
-    result: 'High LDL Cholesterol (160 mg/dL)',
-    normalRange: 'LDL < 100 mg/dL',
-    notes: 'LDL cholesterol is elevated. Recommend dietary changes and follow-up in 3 months.'
-  },
-  {
-    _id: '3',
-    testName: 'Thyroid-Stimulating Hormone (TSH)',
-    testDate: '2023-09-20',
-    resultDate: '2023-09-21',
-    status: 'Normal',
-    result: '2.5 mIU/L',
-    normalRange: '0.4 - 4.0 mIU/L',
-    notes: 'Thyroid function is normal.'
-  }
-];
-
 const LabTests = () => {
   const navigate = useNavigate();
   const detailsCardRef = useRef(null);
   const { token } = useContext(AuthContext);
+  const [labTests, setLabTests] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
 
@@ -51,7 +19,22 @@ const LabTests = () => {
       navigate("/login");
       return;
     }
+    fetchLabTests();
   }, [authToken, navigate]);
+
+  const fetchLabTests = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/lab-tests", {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setLabTests(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch lab tests:", err);
+    }
+  };
 
   const getStatusBadgeClass = (status) => {
     switch (status) {
@@ -168,9 +151,9 @@ const LabTests = () => {
         <></> // No message needed when details are closed
       )}
 
-      {sampleTests.length > 0 ? (
+      {labTests.length > 0 ? (
         <div className="tests-grid mt-5">
-          {sampleTests.map((test) => (
+          {labTests.map((test) => (
             <div key={test._id} className="test-card">
               <div className="test-card-header">
                 <h5>{test.testName}</h5>

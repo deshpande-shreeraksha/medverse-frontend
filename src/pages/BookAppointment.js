@@ -1,5 +1,5 @@
 // src/pages/BookAppointment.js
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useMemo } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import { doctorsData } from "../data/doctors";
@@ -30,6 +30,32 @@ const BookAppointment = () => {
   const [time, setTime] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [bookedSlots, setBookedSlots] = useState([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
+
+  // Define a curated list of time slots
+  const allTimeSlots = useMemo(() => {
+    return [
+      // Morning
+      "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+      // Afternoon
+      "14:00", "14:30", "15:00", "15:30",
+      // Evening
+      "18:00", "18:30", "19:00", "19:30",
+    ];
+  }, []);
+
+  // Filter out past time slots for today's date
+  const availableTimeSlots = useMemo(() => {
+    const now = new Date();
+    const today = now.toISOString().split("T")[0];
+    const currentTime = now.toTimeString().slice(0, 5); // "HH:MM"
+
+    if (date === today) {
+      return allTimeSlots.filter(slot => slot > currentTime);
+    }
+    return allTimeSlots;
+  }, [date, allTimeSlots]);
 
   // Protect the route: redirect to login if not authenticated
   useEffect(() => {
@@ -42,6 +68,32 @@ const BookAppointment = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, navigate, location]);
+
+  // Fetch booked time slots when doctor or date changes
+  useEffect(() => {
+    if (selectedDoctor && date) {
+      const fetchBookedSlots = async () => {
+        setSlotsLoading(true);
+        try {
+          const res = await fetch(
+            `http://localhost:5000/api/appointments/booked-slots?doctorId=${selectedDoctor}&date=${date}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          if (res.ok) {
+            const data = await res.json();
+            setBookedSlots(data);
+          }
+        } catch (err) {
+          console.error("Failed to fetch booked slots:", err);
+        } finally {
+          setSlotsLoading(false);
+        }
+      };
+      fetchBookedSlots();
+    }
+  }, [selectedDoctor, date, token]);
 
   // Get specialization of selected doctor by ID
   const getSelectedDoctorSpecialization = (doctorId) => {
@@ -57,7 +109,7 @@ const BookAppointment = () => {
     setSpecialization(spec || "");
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!token) {
@@ -70,38 +122,61 @@ const BookAppointment = () => {
       return;
     }
 
-    setLoading(true);
-    setMessage("");
+    // --- Date and Time Validation ---
+    const now = new Date();
+    const today = now.toISOString().split("T")[0];
+    const currentTime = now.toTimeString().slice(0, 5); // Format as "HH:MM"
 
-    try {
-      const doctor = doctorsData.find((d) => d.id.toString() === selectedDoctor);
-      const res = await fetch("http://localhost:5000/api/appointments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          doctorId: selectedDoctor,
-          doctorName: doctor.name,
-          specialization: specialization,
-          mode,
-          date,
-          time,
-        }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setMessage("✅ " + (data.message || "Appointment booked successfully!"));
-        setTimeout(() => navigate("/dashboard"), 1500);
-      } else {
-        setMessage("❌ " + (data.message || "Failed to book appointment"));
-      }
-    } catch (error) {
-      setMessage("❌ Server error. Please try again.");
-    } finally {
-      setLoading(false);
+    if (date < today) {
+      setMessage("❌ Please select a future date for your appointment.");
+      return;
     }
+    if (date === today && time < currentTime) {
+      setMessage("❌ Please select a future time for today's appointment.");
+      return;
+    }
+
+    // --- Optimistic UI Update ---
+    setLoading(true);
+    setMessage("✅ Appointment booked successfully!");
+    setTimeout(() => navigate("/dashboard"), 1200); // Redirect after a short delay
+
+    // --- Send request in the background ---
+    (async () => {
+      try {
+        const doctor = doctorsData.find((d) => d.id.toString() === selectedDoctor);
+        const res = await fetch("http://localhost:5000/api/appointments", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            doctorId: selectedDoctor,
+            doctorName: doctor.name,
+            specialization: specialization,
+            mode,
+            date,
+            time,
+          }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          const errorMessage = data.message || "Booking failed to sync. Please check your dashboard.";
+          // Store the error to be displayed on the next page
+          localStorage.setItem('bookingError', `❌ ${errorMessage}`);
+          console.error("❌ Background booking failed:", data);
+        } else {
+          const data = await res.json();
+          console.log("📦 Booking response:", data); // Log the response for debugging
+        }
+      } catch (err) {
+        console.error("❌ Background booking failed:", err);
+        // Store a generic network error message
+        localStorage.setItem('bookingError', '❌ A network error occurred. Please check your dashboard to confirm your appointment.');
+      }
+    })();
   };
 
   // Do not render the form if there's no token, to prevent a flicker before redirect
@@ -191,6 +266,7 @@ const BookAppointment = () => {
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 required
+                min={new Date().toISOString().split('T')[0]}
               />
             </div>
 
@@ -199,18 +275,24 @@ const BookAppointment = () => {
               <label htmlFor="timeInput" className="form-label fw-bold">
                 Select Time *
               </label>
-              <input
+              <select
                 id="timeInput"
-                type="time"
-                className="form-control"
+                className="form-select"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
                 required
-                min="08:00"
-                max="22:00"
-              />
+              >
+                <option value="">-- Select a Time Slot --</option>
+                                {availableTimeSlots.map(slot => (
+                  <option key={slot} value={slot} disabled={bookedSlots.includes(slot)}>
+                    {new Date(`1970-01-01T${slot}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {bookedSlots.includes(slot) ? " (Booked)" : ""}
+                  </option>
+                ))}
+
+              </select>
               <small className="text-muted d-block mt-2">
-                Appointments available between 8:00 AM and 10:00 PM
+                Appointments available in morning, afternoon, and evening slots.
               </small>
             </div>
 
@@ -220,7 +302,7 @@ const BookAppointment = () => {
               className="btn btn-confirm-appointment mt-4 w-100"
               disabled={loading}
             >
-              {loading ? "Booking..." : "Confirm Appointment"}
+              {loading ? "Booked!" : "Confirm Appointment"}
             </button>
           </form>
         </div>

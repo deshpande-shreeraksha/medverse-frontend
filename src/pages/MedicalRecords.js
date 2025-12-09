@@ -28,7 +28,7 @@ const MedicalRecords = ({ isModal = false, onHide }) => {
   const fetchMedicalRecords = async () => {
     try {
       const res = await fetch("http://localhost:5000/api/medical-records", {
-        headers: { "Authorization": authToken },
+        headers: { "Authorization": `Bearer ${authToken}` },
       });
       if (res.ok) {
         const data = await res.json();

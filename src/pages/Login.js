@@ -6,13 +6,14 @@ import { useNavigate, NavLink, useSearchParams, useLocation } from "react-router
 const Login = () => {
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
   const location = useLocation(); // Get location to access state
   const [searchParams] = useSearchParams();
   const redirectPath = searchParams.get("redirect");
-  const { setToken, setUser } = useContext(AuthContext);
+  const { login } = useContext(AuthContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -28,12 +29,8 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem("authToken", data.token);
-        const u = { firstName: data.firstName, lastName: data.lastName };
-        localStorage.setItem('authUser', JSON.stringify(u));
-        if (setToken) setToken(data.token);
-        if (setUser) setUser(u);
-        setSuccessMessage(`✅ Welcome back, ${data.firstName} ${data.lastName}!`);
+        login(data, rememberMe);
+        setSuccessMessage(`✅ Welcome back, ${data.user.firstName}!`);
         // Redirect to the intended page or home page after a delay
         setTimeout(() => {
           if (redirectPath) {
@@ -85,6 +82,19 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+        </div>
+
+        <div className="mb-3 form-check">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            id="rememberMeCheck"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+          />
+          <label className="form-check-label" htmlFor="rememberMeCheck">
+            Remember Me
+          </label>
         </div>
 
         <button type="submit" className="btn btn-primary w-100">Login</button>
