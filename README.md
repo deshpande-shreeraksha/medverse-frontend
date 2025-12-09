@@ -1,75 +1,90 @@
-# Getting Started with Create React App
+# Medverse - Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is the frontend for the Medverse application, a modern platform for booking and managing medical appointments. It is built with React and interacts with the backend API to provide a seamless user experience.
+
+## Features
+
+-   **User Authentication**: Secure sign-up, login, and logout functionality.
+-   **Doctor Browsing**: Find doctors and view their specializations.
+-   **Appointment Booking**: Schedule appointments with real-time slot availability checking.
+-   **User Dashboard**: A central place for users to view and manage their upcoming appointments.
+-   **Appointment Management**: Reschedule or cancel upcoming appointments.
+-   **Health Records**: View personal medical records and lab test results.
+-   **Privilege Card**: Apply for and view a digital privilege card.
+-   **Responsive Design**: A clean and intuitive interface that works on both desktop and mobile devices.
+
+## Getting Started
+
+Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+-   [Node.js](https://nodejs.org/) (v16 or later is recommended)
+-   `npm` or `yarn` package manager
+
+### Installation
+
+1.  **Clone the repository** (if you haven't already):
+    ```sh
+    git clone <repository-url>
+    cd medverse/frontend
+    ```
+
+2.  **Install NPM packages**:
+    This command will install all the necessary dependencies listed in `package.json`.
+    ```sh
+    npm install
+    ```
+
+### Running the Application
+
+To start the development server, run the following command. The application will open automatically in your default browser at `http://localhost:3000`.
+
+```sh
+npm start
+```
+
+The page will automatically reload when you make edits. You will also see any lint errors or warnings in the console.
 
 ## Available Scripts
 
 In the project directory, you can run:
 
-### `npm start`
+-   `npm start`: Runs the app in development mode.
+-   `npm test`: Launches the test runner in interactive watch mode.
+-   `npm run build`: Builds the app for production into the `build` folder.
+-   `npm run eject`: **Note: this is a one-way operation. Once you `eject`, you can’t go back!** It removes the single build dependency and copies all configuration files and transitive dependencies into your project.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Folder Structure
 
-Note — Signup changes
+Here is an overview of the key directories within the `src` folder:
 
-- The signup page now collects: `firstName`, `lastName`, `email`, `password`, and `confirm password`.
-- Password rules enforced on the client: minimum 8 characters, at least one uppercase character, and at least one special character (e.g. `!@#$%^&*`).
+```
+src/
+├── components/     # Reusable React components (e.g., Navbar, Footer, Modals)
+├── data/           # Static data files (e.g., doctors list)
+├── pages/          # Page-level components (e.g., Home, Dashboard, Login)
+├── styles/         # Global CSS files and component-specific styles
+├── App.js          # Main application component with routing logic
+├── AuthContext.js  # React Context for managing user authentication state
+└── index.js        # The entry point of the React application
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Environment Variables
 
-### `npm test`
+The application expects the backend API to be running at `http://localhost:5000`. If your backend is running on a different port or host, you can create a `.env` file in the root of the `frontend` directory to override the default settings.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Create a file named `.env` and add the following variable:
 
-### `npm run build`
+```
+REACT_APP_API_URL=http://localhost:5000
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Key Dependencies
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+-   **React**: A JavaScript library for building user interfaces.
+-   **React Router**: For declarative routing in the application.
+-   **Bootstrap & React-Bootstrap**: For styling and responsive UI components.
+-   **`fetch` API**: Used for making HTTP requests to the backend.
