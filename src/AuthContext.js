@@ -46,7 +46,18 @@ export const AuthProvider = ({ children }) => {
     navigate("/login"); // Redirect to login after logout
   };
 
-  const value = { token, user, login, logout };
+  // Direct setters for immediate context updates (used after signup/login)
+  const updateToken = (newToken) => {
+    localStorage.setItem("authToken", newToken);
+    setToken(newToken);
+  };
+
+  const updateUser = (newUser) => {
+    localStorage.setItem("authUser", JSON.stringify(newUser));
+    setUser(newUser);
+  };
+
+  const value = { token, setToken: updateToken, user, setUser: updateUser, login, logout };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

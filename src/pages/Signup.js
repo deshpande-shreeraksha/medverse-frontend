@@ -15,7 +15,7 @@ const Signup = () => {
   const [doctorIdError, setDoctorIdError] = useState("");
 
   const navigate = useNavigate();
-  const { setToken, setUser } = useContext(AuthContext);
+  const { login, setToken, setUser } = useContext(AuthContext);
 
   const [passwordError, setPasswordError] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -133,13 +133,18 @@ const Signup = () => {
         });
         const data = await res.json();
         if (res.ok) {
-          // save token and user and show inline success message
+          // Backend returns user data; save token and complete user info
+          const userData = {
+            firstName: data.firstName || firstName,
+            lastName: data.lastName || lastName,
+            email: email,
+            role: role,
+            id: data.id,
+          };
           localStorage.setItem("authToken", data.token);
-          // backend returns names, persist them and set context
-          const u = { firstName: data.firstName || firstName, lastName: data.lastName || lastName };
-          localStorage.setItem('authUser', JSON.stringify(u));
+          localStorage.setItem("authUser", JSON.stringify(userData));
           if (setToken) setToken(data.token);
-          if (setUser) setUser(u);
+          if (setUser) setUser(userData);
           setSuccessMessage(data.message || "Signup successful. Redirecting...");
           // clear server/field errors
           setServerError("");
