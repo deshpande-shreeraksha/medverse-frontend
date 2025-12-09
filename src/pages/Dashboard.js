@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
+import { getApiUrl } from "../api";
 import { Modal } from "react-bootstrap";
 import MedicalRecords from "./MedicalRecords"; // Import the component
 import DisplayPrivilegeCard from "../components/DisplayPrivilegeCard";
