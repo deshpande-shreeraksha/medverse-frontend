@@ -1,63 +1,60 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // Prioritize localStorage (Remember Me) over sessionStorage
-  const [token, setToken] = useState(localStorage.getItem("authToken") || sessionStorage.getItem("authToken"));
-  const [user, setUser] = useState(() => {
-    try {
-      const storedUser =
-        localStorage.getItem("authUser") || sessionStorage.getItem("authUser");
-      return JSON.parse(storedUser);
-    } catch {
-      return null;
-    }
-  });
-
+  const [token, setToken] = useState(localStorage.getItem("authToken"));
+  const [user, setUser] = useState(null);
+  const [activeRole, setActiveRole] = useState(localStorage.getItem("activeRole"));
   const navigate = useNavigate();
 
-  const login = (data, rememberMe = false) => {
-    const userPayload = data.user || { 
-      firstName: data.firstName, 
-      lastName: data.lastName,
-      email: data.email,
-      id: data.id
-    };
+  useEffect(() => {
+    // On initial load, parse user from storage if it exists
+    const storedUser = localStorage.getItem("authUser");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      // Ensure activeRole is valid, otherwise default to the first role
+      if (!parsedUser.roles || !parsedUser.roles.includes(activeRole)) {
+        const defaultRole = parsedUser.roles ? parsedUser.roles[0] : 'patient';
+        setActiveRole(defaultRole);
+        localStorage.setItem("activeRole", defaultRole);
+      }
+    }
+  }, [activeRole]);
 
-    const storage = rememberMe ? localStorage : sessionStorage;
-    storage.setItem("authToken", data.token);
-    storage.setItem("authUser", JSON.stringify(userPayload));
+  const login = (userData, authToken) => {
+    // Make it robust: handle both user.role (string) and user.roles (array)
+    const roles = userData.roles || (userData.role ? [userData.role] : ['patient']);
+    const defaultRole = roles[0] || 'patient';
 
-    setToken(data.token);
-    setUser(userPayload);
+    localStorage.setItem("authToken", authToken);
+    localStorage.setItem("authUser", JSON.stringify(userData));
+    localStorage.setItem("activeRole", defaultRole);
+    setToken(authToken);
+    setUser(userData);
+    setActiveRole(defaultRole);
   };
 
-  const logout = () => {
-    // Clear both storages to ensure a full logout
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("authUser");
-    sessionStorage.removeItem("authToken");
-    sessionStorage.removeItem("authUser");
-
+  const logout = useCallback(() => {
+    localStorage.clear();
     setToken(null);
     setUser(null);
-    navigate("/login"); // Redirect to login after logout
+    setActiveRole(null);
+    navigate("/login");
+  }, [navigate]);
+
+  const switchRole = (newRole) => {
+    if (user && user.roles.includes(newRole)) {
+      localStorage.setItem("activeRole", newRole);
+      setActiveRole(newRole);
+      // Navigate to the correct dashboard when role is switched
+      navigate(newRole === 'doctor' ? '/dashboard/doctor' : '/dashboard/patient');
+    }
   };
 
-  // Direct setters for immediate context updates (used after signup/login)
-  const updateToken = (newToken) => {
-    localStorage.setItem("authToken", newToken);
-    setToken(newToken);
-  };
+  const authContextValue = { token, user, activeRole, login, logout, switchRole };
 
-  const updateUser = (newUser) => {
-    localStorage.setItem("authUser", JSON.stringify(newUser));
-    setUser(newUser);
-  };
-
-  const value = { token, setToken: updateToken, user, setUser: updateUser, login, logout };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={authContextValue}>{children}</AuthContext.Provider>;
 };

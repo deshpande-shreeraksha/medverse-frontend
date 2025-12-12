@@ -11,6 +11,7 @@ const DoctorProfileModal = ({ doctor, show, onHide, onBookAppointment }) => {
       <Modal.Header closeButton>
         <Modal.Title>
           {doctor.name} - <span className="text-muted">{doctor.title}</span>
+          <div style={{ fontSize: 12, marginLeft: 10 }} className="text-muted d-inline-block">ID: {doctor.id} <button className="btn btn-sm btn-outline-secondary ms-2" onClick={() => { navigator.clipboard?.writeText(String(doctor.id)); }}>Copy ID</button></div>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>

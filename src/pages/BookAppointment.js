@@ -32,25 +32,38 @@ const BookAppointment = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [bookedSlots, setBookedSlots] = useState([]);
+  const [doctorAvailability, setDoctorAvailability] = useState([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
 
-  // Define a curated list of time slots
+  // Generate time slots based on doctor's availability
   const allTimeSlots = useMemo(() => {
-    return [
-      // Morning
-      "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-      // Afternoon
-      "14:00", "14:30", "15:00", "15:30",
-      // Evening
-      "18:00", "18:30", "19:00", "19:30",
-    ];
-  }, []);
+    if (!date || doctorAvailability.length === 0) return [];
+
+    const selectedDay = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
+    const daySchedule = doctorAvailability.find(d => d.day === selectedDay);
+
+    if (!daySchedule || !daySchedule.isAvailable) return [];
+
+    const slots = [];
+    let currentTime = new Date(`${date}T${daySchedule.startTime}`);
+    const endTime = new Date(`${date}T${daySchedule.endTime}`);
+    const slotDuration = 30; // in minutes
+
+    while (currentTime < endTime) {
+      slots.push(currentTime.toTimeString().slice(0, 5));
+      currentTime.setMinutes(currentTime.getMinutes() + slotDuration);
+    }
+    return slots;
+
+  }, [date, doctorAvailability]);
 
   // Filter out past time slots for today's date
   const availableTimeSlots = useMemo(() => {
     const now = new Date();
     const today = now.toISOString().split("T")[0];
-    const currentTime = now.toTimeString().slice(0, 5); // "HH:MM"
+    // Add a 5-minute buffer to the current time
+    now.setMinutes(now.getMinutes() + 5);
+    const currentTime = now.toTimeString().slice(0, 5);
 
     if (date === today) {
       return allTimeSlots.filter(slot => slot > currentTime);
@@ -70,11 +83,13 @@ const BookAppointment = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, navigate, location]);
 
-  // Fetch booked time slots when doctor or date changes
+  // Fetch doctor availability and booked slots when doctor or date changes
   useEffect(() => {
     if (selectedDoctor && date) {
-      const fetchBookedSlots = async () => {
+      const fetchScheduleData = async () => {
         setSlotsLoading(true);
+        setBookedSlots([]);
+        setDoctorAvailability([]);
         try {
           const res = await fetch(
             getApiUrl(`/api/appointments/booked-slots?doctorId=${selectedDoctor}&date=${date}`),
@@ -86,13 +101,21 @@ const BookAppointment = () => {
             const data = await res.json();
             setBookedSlots(data);
           }
+
+          const availabilityRes = await fetch(getApiUrl(`/api/doctors/${selectedDoctor}/availability`));
+          if (availabilityRes.ok) {
+            const availabilityData = await availabilityRes.json();
+            setDoctorAvailability(availabilityData);
+          } else {
+            setMessage("❌ Could not load doctor's availability.");
+          }
         } catch (err) {
-          console.error("Failed to fetch booked slots:", err);
+          console.error("Failed to fetch schedule data:", err);
         } finally {
           setSlotsLoading(false);
         }
       };
-      fetchBookedSlots();
+      fetchScheduleData();
     }
   }, [selectedDoctor, date, token]);
 
@@ -283,17 +306,22 @@ const BookAppointment = () => {
                 required
               >
                 <option value="">-- Select a Time Slot --</option>
-                                {availableTimeSlots.map(slot => (
-                  <option key={slot} value={slot} disabled={bookedSlots.includes(slot)}>
-                    {new Date(`1970-01-01T${slot}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    {bookedSlots.includes(slot) ? " (Booked)" : ""}
-                  </option>
-                ))}
-
+                {slotsLoading ? (
+                  <option disabled>Loading slots...</option>
+                ) : availableTimeSlots.length > 0 ? (
+                  availableTimeSlots.map(slot => (
+                    <option key={slot} value={slot} disabled={bookedSlots.includes(slot)}>
+                      {new Date(`1970-01-01T${slot}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {bookedSlots.includes(slot) ? " (Booked)" : ""}
+                    </option>
+                  ))
+                ) : (
+                  <option disabled>No available slots for this day.</option>
+                )}
               </select>
-              <small className="text-muted d-block mt-2">
-                Appointments available in morning, afternoon, and evening slots.
-              </small>
+              {date && !slotsLoading && availableTimeSlots.length === 0 && (
+                <small className="text-danger d-block mt-2">The doctor is not available on this day, or all slots are in the past.</small>
+              )}
             </div>
 
             {/* Submit Button */}

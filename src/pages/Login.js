@@ -7,6 +7,7 @@ import { useNavigate, NavLink, useSearchParams, useLocation } from "react-router
 const Login = () => {
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
+  const [doctorId, setDoctorId] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -15,32 +16,39 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const redirectPath = searchParams.get("redirect");
   const { login } = useContext(AuthContext);
+  const isDoctorLogin = email.toLowerCase().endsWith('@docmedverse.com');
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMessage(""); setSuccessMessage("");
 
+    const payload = { email, password };
+    if (isDoctorLogin) {
+      payload.doctorId = doctorId;
+    }
     try {
       const response = await fetch(getApiUrl("/api/auth/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        login(data, rememberMe);
-        setSuccessMessage(`✅ Welcome back, ${data.user.firstName}!`);
-        // Redirect to the intended page or home page after a delay
+        login(data.user, data.token); // Pass user object and token correctly
+        const name = (data.user && data.user.firstName) || data.firstName || '';
+        setSuccessMessage(`✅ Welcome back${name ? ', ' + name : ''}!`);
+
+        // Redirect to the intended page or role dashboard after a delay
         setTimeout(() => {
           if (redirectPath) {
-            // Pass the preserved state during the final navigation
             navigate(decodeURIComponent(redirectPath), { state: location.state });
           } else {
+            // Let the RoleDashboardRouter handle the redirect
             navigate("/dashboard");
           }
-        }, 1500);
+        }, 1200);
       } else {
         setErrorMessage(data.message || "Login failed");
       }
@@ -74,6 +82,18 @@ const Login = () => {
           />
         </div>
 
+        {isDoctorLogin && (
+          <div className="mb-3">
+            <label>Doctor ID</label>
+            <input
+              type="text"
+              className="form-control"
+              value={doctorId}
+              onChange={(e) => setDoctorId(e.target.value)}
+              required
+            />
+          </div>
+        )}
         <div className="mb-3">
           <label>Password</label>
           <input

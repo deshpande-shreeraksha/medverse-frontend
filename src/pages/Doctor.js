@@ -50,6 +50,7 @@ const Doctor = () => {
             <Card className="shadow-sm h-100">
               <Card.Body>
                 <Card.Title className="fw-bold">{doc.name}</Card.Title>
+                <p className="mb-1"><strong>Doctor ID:</strong> {doc.id} <button className="btn btn-sm btn-outline-secondary ms-2" onClick={() => { navigator.clipboard?.writeText(String(doc.id)); }}>{'Copy ID'}</button></p>
                 <Card.Subtitle className="mb-2 text-muted">{doc.title}</Card.Subtitle>
                 <p className="mb-1"><strong>📍 Location:</strong> {doc.location}</p>
                 <p className="mb-1"><strong>About:</strong> {doc.about}</p>

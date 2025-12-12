@@ -53,12 +53,25 @@ const Signup = () => {
   const handleEmailChange = (e) => {
     const val = e.target.value.trim();
     setEmail(val);
-    // accept only gmail addresses (exact domain gmail.com)
+  
     const gmailRegex = /^[^\s@]+@gmail\.com$/i;
-    if (!gmailRegex.test(val)) {
-      setEmailError("❌ Please use a valid @gmail.com email address");
+    const doctorRegex = /^[^\s@]+@docmedverse\.com$/i;
+    const adminEmail = 'support@medverse.com';
+  
+    if (val.toLowerCase() === adminEmail) {
+      setRole('admin');
+      setEmailError('');
+    } else if (doctorRegex.test(val)) {
+      setRole('doctor');
+      setEmailError('');
+    } else if (gmailRegex.test(val)) {
+      setRole('patient');
+      setEmailError('');
     } else {
-      setEmailError("");
+      // If email is not empty and doesn't match, show an error
+      setRole('patient'); // Default to patient
+      if (val) setEmailError("❌ Use a @gmail.com, @docmedverse.com, or the admin support email.");
+      else setEmailError('');
     }
   };
 
@@ -154,7 +167,12 @@ const Signup = () => {
           setConfirmError("");
 
           // auto-redirect after a short delay so user sees confirmation
-          setTimeout(() => navigate("/"), 1400);
+          const rolePath = role === 'admin' ? '/dashboard/admin'
+            : role === 'doctor' ? '/dashboard/doctor'
+            : role === 'staff' ? '/dashboard/staff'
+            : '/dashboard/patient';
+
+          setTimeout(() => navigate(rolePath), 1400);
         } else {
           // map server message to field-level errors when possible, otherwise show general error
           const msg = data.message || data.error || "Signup failed";
@@ -234,17 +252,10 @@ const Signup = () => {
               className="form-control"
               value={email}
               onChange={handleEmailChange}
+              readOnly={role === 'admin'}
               required
             />
             {emailError && <small className="text-danger">{emailError}</small>}
-          </div>
-
-          <div className="mb-3">
-            <label>Account type</label>
-            <select className="form-select" value={role} onChange={(e) => setRole(e.target.value)}>
-              <option value="patient">Patient</option>
-              <option value="doctor">Doctor</option>
-            </select>
           </div>
 
           {role === "doctor" && (

@@ -1,5 +1,5 @@
 // src/pages/AuthCard.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import "../styles/authcard.css";
 
@@ -24,6 +24,13 @@ const AuthCard = () => {
       setPasswordError("");
     }
   };
+
+  // Mark that the user has seen the auth gate so the site won't force /auth again
+  useEffect(() => {
+    try {
+      localStorage.setItem('authSeen', '1');
+    } catch {}
+  }, []);
 
   return (
     <div className="auth-container">
