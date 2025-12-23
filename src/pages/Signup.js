@@ -11,8 +11,6 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("patient");
-  const [doctorId, setDoctorId] = useState("");
-  const [doctorIdError, setDoctorIdError] = useState("");
 
   const navigate = useNavigate();
   const { login, setToken, setUser } = useContext(AuthContext);
@@ -117,27 +115,24 @@ const Signup = () => {
       setConfirmError("");
     }
 
-    // doctorId validation when role is doctor
-    if (role === "doctor") {
-      const re = /^\d{5}$/;
-      if (!re.test(doctorId)) {
-        setDoctorIdError("❌ Doctor ID must be exactly 5 digits");
-        valid = false;
-      } else {
-        setDoctorIdError("");
-      }
-    } else {
-      setDoctorIdError("");
-    }
-
     if (!valid) return;
     // continue signup logic - call backend
     (async () => {
       try {
         setServerError("");
         setIsSubmitting(true);
-        const payload = { firstName, lastName, email, password, role };
-        if (role === "doctor") payload.doctorId = doctorId;
+        const payload = {
+          firstName,
+          lastName,
+          email,
+          password,
+          role,
+          ...(role === 'doctor' && {
+            specialization: "General Physician",
+            experience: 0,
+            fees: 0,
+          }),
+        };
 
         const res = await fetch(getApiUrl("/api/auth/signup"), {
           method: "POST",
@@ -168,11 +163,11 @@ const Signup = () => {
 
           // auto-redirect after a short delay so user sees confirmation
           const rolePath = role === 'admin' ? '/dashboard/admin'
-            : role === 'doctor' ? '/dashboard/doctor'
+            : role === 'doctor' ? '/doctor/profile'
             : role === 'staff' ? '/dashboard/staff'
             : '/dashboard/patient';
 
-          setTimeout(() => navigate(rolePath), 1400);
+          setTimeout(() => navigate(rolePath, role === 'doctor' ? { state: { isNewDoctor: true } } : {}), 1400);
         } else {
           // map server message to field-level errors when possible, otherwise show general error
           const msg = data.message || data.error || "Signup failed";
@@ -258,83 +253,58 @@ const Signup = () => {
             {emailError && <small className="text-danger">{emailError}</small>}
           </div>
 
-          {role === "doctor" && (
-            <div className="mb-3">
-              <label>Doctor ID / License</label>
-              <input
-                type="text"
-                className="form-control"
-                value={doctorId}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  // Allow only digits in input
-                  const cleaned = val.replace(/[^0-9]/g, "");
-                  setDoctorId(cleaned);
-                  if (cleaned && !/^\d{5}$/.test(cleaned)) {
-                    setDoctorIdError("❌ Doctor ID must be exactly 5 digits");
-                  } else {
-                    setDoctorIdError("");
-                  }
-                }}
-                placeholder="Enter your 5-digit doctor ID"
-                required
-              />
-              {doctorIdError && <small className="text-danger">{doctorIdError}</small>}
-            </div>
-          )}
-
           {/* Password Field */}
-        <div className="mb-3">
-          <label>Password</label>
-          <input
-            type="password"
-            className="form-control"
-            value={password}
-            onChange={handlePasswordChange}
-            required
-          />
-          {passwordError && (
-            <small className="text-danger">{passwordError}</small>
-          )}
-        </div>
+          <div className="mb-3">
+            <label>Password</label>
+            <input
+              type="password"
+              className="form-control"
+              value={password}
+              onChange={handlePasswordChange}
+              required
+            />
+            {passwordError && (
+              <small className="text-danger">{passwordError}</small>
+            )}
+          </div>
 
-        <div className="mb-3">
-          <label>Confirm password</label>
-          <input
-            type="password"
-            className="form-control"
-            value={confirmPassword}
-            onChange={handleConfirmPasswordChange}
-            required
-          />
-          {confirmError && <small className="text-danger">{confirmError}</small>}
-        </div>
+          <div className="mb-3">
+            <label>Confirm password</label>
+            <input
+              type="password"
+              className="form-control"
+              value={confirmPassword}
+              onChange={handleConfirmPasswordChange}
+              required
+            />
+            {confirmError && <small className="text-danger">{confirmError}</small>}
+          </div>
 
-        <div className="d-grid gap-2">
-        <button
-          type="submit"
-          className="btn btn-success w-100"
-          disabled={
-            isSubmitting ||
-            !firstName.trim() ||
-            !lastName.trim() ||
-            !email ||
-            !password ||
-            !confirmPassword ||
-            !!passwordError ||
-            !!emailError ||
-            !!nameError ||
-            !!confirmError
-          }
-        >
-          {isSubmitting ? "Signing up…" : "Sign Up"}
-        </button>
+          <div className="d-grid gap-2">
+            <button
+              type="submit"
+              className="btn btn-success w-100"
+              disabled={
+                isSubmitting ||
+                !firstName.trim() ||
+                !lastName.trim() ||
+                !email ||
+                !password ||
+                !confirmPassword ||
+                !!passwordError ||
+                !!emailError ||
+                !!nameError ||
+                !!confirmError
+              }
+            >
+              {isSubmitting ? "Signing up…" : "Sign Up"}
+            </button>
 
-        <div className="text-center mt-3">
-          Already have an account?{' '}
-          <NavLink to="/login" className="fw-bold text-primary">Login</NavLink>
-        </div>
-        </div>
+            <div className="text-center mt-3">
+              Already have an account?{' '}
+              <NavLink to="/login" className="fw-bold text-primary">Login</NavLink>
+            </div>
+          </div>
         </form>
       </div>
     </div>

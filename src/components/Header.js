@@ -6,6 +6,12 @@ import { AuthContext } from '../AuthContext';
 const Header = () => {
   const { user, activeRole, switchRole, logout } = useContext(AuthContext);
 
+  const getDashboardPath = () => {
+    if (user?.role === 'admin') return '/dashboard/admin';
+    if (user?.role === 'doctor') return '/dashboard/doctor';
+    return '/dashboard';
+  };
+
   return (
     <Navbar bg="light" expand="lg" className="shadow-sm">
       <Container>
@@ -17,7 +23,7 @@ const Header = () => {
           <Nav className="ms-auto align-items-center">
             {user ? (
               <>
-                <Nav.Link as={NavLink} to="/dashboard">
+                <Nav.Link as={NavLink} to={getDashboardPath()}>
                   Dashboard
                 </Nav.Link>
                 {/* Show role switcher only if user has multiple roles */}

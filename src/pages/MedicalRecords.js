@@ -5,7 +5,7 @@ import { getApiUrl } from "../api";
 import { Tabs, Tab, Modal } from "react-bootstrap";
 import "../styles/medicalrecords.css";
 
-const MedicalRecords = ({ isModal = false, onHide }) => {
+const MedicalRecords = ({ isModal = false, onHide, patientId }) => {
   const navigate = useNavigate(); // Always define hooks
   const { token } = useContext(AuthContext);
   const [records, setRecords] = useState([]);
@@ -28,7 +28,8 @@ const MedicalRecords = ({ isModal = false, onHide }) => {
 
   const fetchMedicalRecords = async () => {
     try {
-      const res = await fetch(getApiUrl("/api/medical-records"), {
+      const endpoint = patientId ? `/api/medical-records/patient/${patientId}` : "/api/medical-records";
+      const res = await fetch(getApiUrl(endpoint), {
         headers: { "Authorization": `Bearer ${authToken}` },
       });
       if (res.ok) {

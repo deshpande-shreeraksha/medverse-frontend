@@ -91,7 +91,11 @@ const AdminAppointmentsList = () => {
           {appointments.map((a) => (
             <tr key={a._id}>
               <td>{a.userId ? `${a.userId.firstName} ${a.userId.lastName}` : '—'}</td>
-              <td>{a.doctorName || a.doctorId || '—'}</td>
+              <td>{
+                a.doctorName ||
+                (a.doctorId && (a.doctorId.firstName ? `${a.doctorId.firstName} ${a.doctorId.lastName}` : String(a.doctorId))) ||
+                '—'
+              }</td>
               <td>{new Date(a.startAt).toLocaleString()}</td>
               <td>{a.mode}</td>
               <td>{a.status}</td>

@@ -5,16 +5,22 @@ import { AuthContext } from '../AuthContext';
 // Usage: <RoleRoute allowedRoles={["admin"]}><AdminDashboard/></RoleRoute>
 const RoleRoute = ({ allowedRoles = [], children, fallback = '/dashboard' }) => {
   const { user } = useContext(AuthContext);
-  const role = (user && user.role) || (() => {
+  
+  // Get user from context or localStorage
+  const currentUser = user || (() => {
     try {
-      const su = JSON.parse(localStorage.getItem('authUser') || '{}');
-      return su.role;
+      return JSON.parse(localStorage.getItem('authUser') || '{}');
     } catch {
       return null;
     }
   })();
 
-  if (!role) return <Navigate to="/login" replace />;
+  if (!currentUser || !currentUser.role) return <Navigate to="/login" replace />;
+
+  // Force admin role for support email
+  let role = currentUser.role;
+  if (currentUser.email === 'support@medverse.com') role = 'admin';
+
   if (allowedRoles.length === 0 || allowedRoles.includes(role)) return children;
   return <Navigate to={fallback} replace />;
 };

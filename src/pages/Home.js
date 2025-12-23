@@ -25,6 +25,12 @@ const Home = () => {
   // determine if the current user is a doctor (from context or persisted auth)
   const isDoctor = (currentUser && currentUser.role === "doctor") || false;
 
+  const getDashboardPath = () => {
+    if (currentUser?.role === 'admin') return '/dashboard/admin';
+    if (currentUser?.role === 'doctor') return '/dashboard/doctor';
+    return '/dashboard';
+  };
+
   useEffect(() => {
     const fetchUpcomingAppointment = async () => {
       if (!token) {
@@ -71,7 +77,7 @@ const Home = () => {
             <>
               <h4 className="mb-2">Welcome back, {currentUser.firstName} {currentUser.lastName} 👋</h4>
               <p className="mb-3">Good to see you — manage your appointments and records from your dashboard.</p>
-              <NavLink to="/dashboard" className="btn btn-dark btn-lg">Go to Dashboard</NavLink>
+              <NavLink to={getDashboardPath()} className="btn btn-dark btn-lg">Go to Dashboard</NavLink>
             </>
           ) : (
             <>

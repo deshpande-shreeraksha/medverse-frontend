@@ -62,61 +62,59 @@ const DoctorAvailability = () => {
     }
 
     return (
-        <div className="container my-5">
-            <Card className="shadow-sm">
-                <Card.Header as="h2">Manage Weekly Availability</Card.Header>
-                <Card.Body>
-                    <p className="text-muted">Set your standard working hours for each day. This will determine the slots available for booking.</p>
-                    {error && <Alert variant="danger">{error}</Alert>}
-                    {success && <Alert variant="success">{success}</Alert>}
-                    <Form onSubmit={handleSubmit}>
-                        {availability.map(({ day, isAvailable, startTime, endTime }) => (
-                            <Card key={day} className={`mb-3 ${!isAvailable ? 'bg-light' : ''}`}>
-                                <Card.Body>
-                                    <Row className="align-items-center">
-                                        <Col md={2}>
-                                            <Form.Check
-                                                type="switch"
-                                                id={`switch-${day}`}
-                                                label={day}
-                                                checked={isAvailable}
-                                                onChange={() => handleToggle(day)}
-                                                className="fw-bold fs-5"
+        <Card className="shadow-sm">
+            <Card.Header as="h4">Manage Weekly Availability</Card.Header>
+            <Card.Body>
+                <p className="text-muted">Set your standard working hours for each day. This will determine the slots available for booking.</p>
+                {error && <Alert variant="danger">{error}</Alert>}
+                {success && <Alert variant="success">{success}</Alert>}
+                <Form onSubmit={handleSubmit}>
+                    {availability.map(({ day, isAvailable, startTime, endTime }) => (
+                        <Card key={day} className={`mb-3 ${!isAvailable ? 'bg-light' : ''}`}>
+                            <Card.Body>
+                                <Row className="align-items-center">
+                                    <Col md={2}>
+                                        <Form.Check
+                                            type="switch"
+                                            id={`switch-${day}`}
+                                            label={day}
+                                            checked={isAvailable}
+                                            onChange={() => handleToggle(day)}
+                                            className="fw-bold fs-5"
+                                        />
+                                    </Col>
+                                    <Col md={5}>
+                                        <Form.Group>
+                                            <Form.Label>Start Time</Form.Label>
+                                            <Form.Control
+                                                type="time"
+                                                value={startTime}
+                                                onChange={(e) => handleTimeChange(day, 'startTime', e.target.value)}
+                                                disabled={!isAvailable}
                                             />
-                                        </Col>
-                                        <Col md={5}>
-                                            <Form.Group>
-                                                <Form.Label>Start Time</Form.Label>
-                                                <Form.Control
-                                                    type="time"
-                                                    value={startTime}
-                                                    onChange={(e) => handleTimeChange(day, 'startTime', e.target.value)}
-                                                    disabled={!isAvailable}
-                                                />
-                                            </Form.Group>
-                                        </Col>
-                                        <Col md={5}>
-                                            <Form.Group>
-                                                <Form.Label>End Time</Form.Label>
-                                                <Form.Control
-                                                    type="time"
-                                                    value={endTime}
-                                                    onChange={(e) => handleTimeChange(day, 'endTime', e.target.value)}
-                                                    disabled={!isAvailable}
-                                                />
-                                            </Form.Group>
-                                        </Col>
-                                    </Row>
-                                </Card.Body>
-                            </Card>
-                        ))}
-                        <Button variant="primary" type="submit" disabled={saving} className="w-100 mt-3">
-                            {saving ? 'Saving...' : 'Save Availability'}
-                        </Button>
-                    </Form>
-                </Card.Body>
-            </Card>
-        </div>
+                                        </Form.Group>
+                                    </Col>
+                                    <Col md={5}>
+                                        <Form.Group>
+                                            <Form.Label>End Time</Form.Label>
+                                            <Form.Control
+                                                type="time"
+                                                value={endTime}
+                                                onChange={(e) => handleTimeChange(day, 'endTime', e.target.value)}
+                                                disabled={!isAvailable}
+                                            />
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
+                            </Card.Body>
+                        </Card>
+                    ))}
+                    <Button variant="primary" type="submit" disabled={saving} className="w-100 mt-3">
+                        {saving ? 'Saving...' : 'Save Availability'}
+                    </Button>
+                </Form>
+            </Card.Body>
+        </Card>
     );
 };
 

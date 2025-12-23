@@ -3,7 +3,6 @@ import React, { useState, useContext, useEffect, useMemo } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import { getApiUrl } from "../api";
-import { doctorsData } from "../data/doctors";
 import "../styles/bookappointment.css";
 
 const BookAppointment = () => {
@@ -12,17 +11,11 @@ const BookAppointment = () => {
   const { doctorId } = useParams(); // Read doctorId from URL parameter
   const location = useLocation(); // Read state from navigation
 
-  // Use shared doctors data from data/doctors.js
-
   // Get initial values from URL params and location state
   const initialDoctorId = doctorId || "";
-  
-  // Find doctor from data to ensure we have the info even after a redirect
-  const doctorFromData = doctorsData.find(d => d.id.toString() === initialDoctorId);
 
   // Prefer location.state, but fall back to looking up from data
-  const initialDoctorName = location.state?.doctorName || doctorFromData?.name || "";
-  const initialSpecialization = location.state?.specialization || doctorFromData?.specialization || "";
+  const initialSpecialization = location.state?.specialization || "";
 
   const [selectedDoctor, setSelectedDoctor] = useState(initialDoctorId);
   const [specialization, setSpecialization] = useState(initialSpecialization);
@@ -34,6 +27,40 @@ const BookAppointment = () => {
   const [bookedSlots, setBookedSlots] = useState([]);
   const [doctorAvailability, setDoctorAvailability] = useState([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
+  const [doctors, setDoctors] = useState([]);
+  const [doctorName, setDoctorName] = useState(location.state?.doctorName || "");
+
+  // Fetch doctors list on mount
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const res = await fetch(getApiUrl("/api/doctors"));
+        const data = await res.json();
+        const mappedDoctors = data.map(doc => ({
+          // Use the internal _id as the unique identifier
+          id: doc._id,
+          name: `Dr. ${doc.firstName} ${doc.lastName}`,
+          specialization: doc.specialization || "General Physician",
+          image: doc.profilePictureUrl ? getApiUrl(doc.profilePictureUrl) : "https://via.placeholder.com/150",
+          qualifications: doc.qualifications,
+          bio: doc.bio,
+          consultationFee: doc.consultationFee
+        }));
+        setDoctors(mappedDoctors);
+        
+        // If we have a selected doctor but no specialization (e.g. page refresh), find it now
+        if (initialDoctorId && !initialSpecialization) {
+            const found = mappedDoctors.find(d => d.id === initialDoctorId);
+            if (found) {
+                setSpecialization(found.specialization);
+            }
+        }
+      } catch (err) {
+        console.error("Failed to fetch doctors", err);
+      }
+    };
+    fetchDoctors();
+  }, [initialDoctorId, initialSpecialization]);
 
   // Generate time slots based on doctor's availability
   const allTimeSlots = useMemo(() => {
@@ -91,8 +118,8 @@ const BookAppointment = () => {
         setBookedSlots([]);
         setDoctorAvailability([]);
         try {
-          const res = await fetch(
-            getApiUrl(`/api/appointments/booked-slots?doctorId=${selectedDoctor}&date=${date}`),
+          const res = await fetch( // The 'doctorId' in the query is now the user's _id
+            getApiUrl(`/api/appointments/booked-slots?doctorId=${selectedDoctor}&date=${date}`), 
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -102,7 +129,7 @@ const BookAppointment = () => {
             setBookedSlots(data);
           }
 
-          const availabilityRes = await fetch(getApiUrl(`/api/doctors/${selectedDoctor}/availability`));
+          const availabilityRes = await fetch(getApiUrl(`/api/doctors/${selectedDoctor}/availability`)); // This now fetches by _id
           if (availabilityRes.ok) {
             const availabilityData = await availabilityRes.json();
             setDoctorAvailability(availabilityData);
@@ -121,9 +148,14 @@ const BookAppointment = () => {
 
   // Get specialization of selected doctor by ID
   const getSelectedDoctorSpecialization = (doctorId) => {
-    const doctor = doctorsData.find((d) => d.id.toString() === doctorId.toString());
+    const doctor = doctors.find((d) => d.id.toString() === doctorId.toString());
     return doctor ? doctor.specialization : "";
   };
+
+  // Get full details of selected doctor for display
+  const selectedDocData = useMemo(() => {
+    return doctors.find((d) => d.id.toString() === selectedDoctor);
+  }, [doctors, selectedDoctor]);
 
   // Handle doctor selection and auto-fill specialization
   const handleDoctorChange = (e) => {
@@ -131,6 +163,8 @@ const BookAppointment = () => {
     setSelectedDoctor(doctorId);
     const spec = getSelectedDoctorSpecialization(doctorId);
     setSpecialization(spec || "");
+    const doctor = doctors.find((d) => d.id.toString() === doctorId);
+    setDoctorName(doctor ? doctor.name : "");
   };
 
   const handleSubmit = async (e) => {
@@ -165,7 +199,7 @@ const BookAppointment = () => {
     setMessage(""); // Clear any previous messages
 
     try {
-      const doctor = doctorsData.find((d) => d.id.toString() === selectedDoctor);
+      const doctor = doctors.find((d) => d.id.toString() === selectedDoctor);
       const res = await fetch(getApiUrl("/api/appointments"), {
         method: "POST",
         headers: {
@@ -222,6 +256,35 @@ const BookAppointment = () => {
             </div>
           )}
 
+          {/* Display Selected Doctor Profile */}
+          {selectedDocData && (
+            <div className="mb-4 p-3 bg-light rounded border">
+              <div className="d-flex align-items-center">
+                <img 
+                  src={selectedDocData.image} 
+                  alt={selectedDocData.name}
+                  className="rounded-circle me-3 shadow-sm"
+                  style={{ width: '60px', height: '60px', objectFit: 'cover' }}
+                />
+                <div>
+                  <h5 className="mb-0 text-primary fw-bold">{selectedDocData.name}</h5>
+                  <div className="text-muted small fw-bold">{selectedDocData.specialization}</div>
+                  {selectedDocData.qualifications && <div className="text-muted small" style={{ fontSize: '0.85rem' }}>{selectedDocData.qualifications}</div>}
+                  {selectedDocData.consultationFee > 0 && (
+                    <div className="mt-1">
+                      <span className="badge bg-success">Fee: ₹{selectedDocData.consultationFee}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              {selectedDocData.bio && (
+                <div className="mt-3 pt-2 border-top">
+                  <p className="text-muted small mb-0 fst-italic">"{selectedDocData.bio}"</p>
+                </div>
+              )}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit}>
             {/* Doctor Selection */}
             <div className="form-group">
@@ -236,12 +299,27 @@ const BookAppointment = () => {
                 required
               >
                 <option value="">-- Choose a Doctor --</option>
-                {doctorsData.map((doctor) => (
+                {doctors.map((doctor) => (
                   <option key={doctor.id} value={doctor.id}>
                     {doctor.name} - {doctor.specialization}
                   </option>
                 ))}
               </select>
+            </div>
+
+            {/* Doctor Name (Auto-filled, Read-only) */}
+            <div className="form-group">
+              <label htmlFor="doctorName" className="form-label fw-bold">
+                Doctor Name
+              </label>
+              <input
+                id="doctorName"
+                type="text"
+                className="form-control"
+                value={doctorName}
+                readOnly
+                placeholder="Auto-filled based on selected doctor"
+              />
             </div>
 
             {/* Specialization (Auto-filled) */}

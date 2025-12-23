@@ -14,12 +14,16 @@ const AdminUserList = () => {
   const [roleFilter, setRoleFilter] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const fetchUsers = async (p = 1) => {
+  const fetchUsers = async (p = 1, filters = null) => {
     setLoading(true);
     try {
       const params = { limit, page: p };
-      if (roleFilter) params.role = roleFilter;
-      if (searchTerm) params.search = searchTerm;
+      const currentRole = filters ? filters.role : roleFilter;
+      const currentSearch = filters ? filters.search : searchTerm;
+      
+      if (currentRole) params.role = currentRole;
+      if (currentSearch) params.search = currentSearch;
+      
       const res = await adminListUsers(params);
       setUsers(res.data.users || []);
       setTotal(res.data.total || 0);
@@ -27,7 +31,11 @@ const AdminUserList = () => {
     } catch (err) {
       const status = err?.response?.status;
       const msg = err?.response?.data?.message || err.message || 'Failed to load users';
-      setError(status ? `${status} — ${msg}` : msg);
+      if (status === 403) {
+        setError("403 — Access Denied. Please Log Out and Log In again to refresh your admin permissions.");
+      } else {
+        setError(status ? `${status} — ${msg}` : msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -66,6 +74,12 @@ const AdminUserList = () => {
     }
   };
 
+  const handleReset = () => {
+    setRoleFilter('');
+    setSearchTerm('');
+    fetchUsers(1, { role: '', search: '' });
+  };
+
   const totalPages = Math.max(1, Math.ceil(total / limit));
 
   if (loading) {
@@ -77,8 +91,12 @@ const AdminUserList = () => {
       <AuthErrorBanner message={error} />
       {error && !String(error).startsWith('401') && <div className="text-danger mb-2">{error}</div>}
 
-      <div className="d-flex justify-content-end mb-2">
-        <button className="btn btn-sm btn-outline-secondary" onClick={() => fetchUsers(page)}>Refresh</button>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h4 className="mb-0">All Registered Users</h4>
+        <div>
+          <button className="btn btn-sm btn-outline-secondary me-2" onClick={handleReset}>Reset Filters</button>
+          <button className="btn btn-sm btn-primary" onClick={() => fetchUsers(page)}>Refresh List</button>
+        </div>
       </div>
 
       <div className="row mb-3 g-2">
@@ -104,6 +122,7 @@ const AdminUserList = () => {
             <th>Name</th>
             <th>Email</th>
             <th>Role</th>
+            <th>Phone</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -113,6 +132,7 @@ const AdminUserList = () => {
               <td>{u.firstName} {u.lastName}</td>
               <td>{u.email}</td>
               <td>{u.role}</td>
+              <td>{u.phone || '-'}</td>
               <td>
                 <button className="btn btn-sm btn-outline-primary me-2" onClick={() => openEdit(u)}>Edit</button>
                 <button className="btn btn-sm btn-secondary me-2" onClick={() => handleToggleRole(u)}>Toggle Role</button>

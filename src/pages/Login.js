@@ -7,7 +7,6 @@ import { useNavigate, NavLink, useSearchParams, useLocation } from "react-router
 const Login = () => {
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
-  const [doctorId, setDoctorId] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -16,16 +15,12 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const redirectPath = searchParams.get("redirect");
   const { login } = useContext(AuthContext);
-  const isDoctorLogin = email.toLowerCase().endsWith('@docmedverse.com');
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMessage(""); setSuccessMessage("");
 
     const payload = { email, password };
-    if (isDoctorLogin) {
-      payload.doctorId = doctorId;
-    }
     try {
       const response = await fetch(getApiUrl("/api/auth/login"), {
         method: "POST",
@@ -45,8 +40,15 @@ const Login = () => {
           if (redirectPath) {
             navigate(decodeURIComponent(redirectPath), { state: location.state });
           } else {
-            // Let the RoleDashboardRouter handle the redirect
-            navigate("/dashboard");
+            // Direct navigation based on role
+            const role = data.user?.role;
+            if (email.toLowerCase() === 'support@medverse.com' || role === 'admin') {
+              navigate("/dashboard/admin");
+            } else if (role === 'doctor') {
+              navigate("/dashboard/doctor");
+            } else if (role === 'staff') {
+              navigate("/dashboard/staff");
+            } else navigate("/dashboard/patient");
           }
         }, 1200);
       } else {
@@ -82,18 +84,6 @@ const Login = () => {
           />
         </div>
 
-        {isDoctorLogin && (
-          <div className="mb-3">
-            <label>Doctor ID</label>
-            <input
-              type="text"
-              className="form-control"
-              value={doctorId}
-              onChange={(e) => setDoctorId(e.target.value)}
-              required
-            />
-          </div>
-        )}
         <div className="mb-3">
           <label>Password</label>
           <input

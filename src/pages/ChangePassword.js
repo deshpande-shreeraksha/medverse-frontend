@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import { getApiUrl } from "../api";
-import "../styles/changepassword.css";
+import { Form, Button, Card, Alert } from "react-bootstrap";
 
 const ChangePassword = () => {
   const navigate = useNavigate();
@@ -65,9 +65,7 @@ const ChangePassword = () => {
       if (res.ok) {
         setMessage("✅ Password changed successfully");
         setFormData({ oldPassword: "", newPassword: "", confirmPassword: "" });
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 1500);
+        // No need to navigate, we are already in the dashboard
       } else {
         setMessage("❌ " + (data.message || "Failed to change password"));
       }
@@ -80,24 +78,20 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className="container my-5">
-      <div className="change-password-card">
-        <div className="card-header-custom">
-          <h2>Change Password</h2>
-          <p>Update your account password to keep it secure</p>
-        </div>
+    <Card className="shadow-sm">
+      <Card.Header as="h4">Change Password</Card.Header>
+      <Card.Body>
+        <p className="text-muted">Update your account password to keep it secure.</p>
 
-        <div className="card-body-custom">
           {message && (
             <div className={`alert ${message.startsWith("✅") ? "alert-success" : "alert-danger"}`} role="alert">
               {message}
             </div>
           )}
 
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label className="form-label fw-bold">Current Password *</label>
-              <div className="password-input-wrapper">
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3" controlId="formOldPassword">
+              <Form.Label className="fw-bold">Current Password *</Form.Label>
                 <input
                   type={showPasswords ? "text" : "password"}
                   className="form-control"
@@ -107,12 +101,10 @@ const ChangePassword = () => {
                   required
                   placeholder="Enter your current password"
                 />
-              </div>
-            </div>
+            </Form.Group>
 
-            <div className="form-group">
-              <label className="form-label fw-bold">New Password *</label>
-              <div className="password-input-wrapper">
+            <Form.Group className="mb-3" controlId="formNewPassword">
+              <Form.Label className="fw-bold">New Password *</Form.Label>
                 <input
                   type={showPasswords ? "text" : "password"}
                   className="form-control"
@@ -122,12 +114,10 @@ const ChangePassword = () => {
                   required
                   placeholder="Enter your new password (min. 6 characters)"
                 />
-              </div>
-            </div>
+            </Form.Group>
 
-            <div className="form-group">
-              <label className="form-label fw-bold">Confirm Password *</label>
-              <div className="password-input-wrapper">
+            <Form.Group className="mb-3" controlId="formConfirmPassword">
+              <Form.Label className="fw-bold">Confirm Password *</Form.Label>
                 <input
                   type={showPasswords ? "text" : "password"}
                   className="form-control"
@@ -137,51 +127,37 @@ const ChangePassword = () => {
                   required
                   placeholder="Confirm your new password"
                 />
-              </div>
-            </div>
+            </Form.Group>
 
-            <div className="form-check mb-4">
-              <input
-                className="form-check-input"
+            <Form.Group className="mb-4" controlId="formShowPassword">
+              <Form.Check
                 type="checkbox"
-                id="showPassword"
+                label="Show passwords"
                 checked={showPasswords}
                 onChange={(e) => setShowPasswords(e.target.checked)}
               />
-              <label className="form-check-label" htmlFor="showPassword">
-                Show passwords
-              </label>
-            </div>
+            </Form.Group>
 
-            <div className="alert alert-info" role="alert">
+            <Alert variant="info">
               <strong>Password Requirements:</strong>
               <ul className="mb-0 mt-2">
                 <li>At least 6 characters long</li>
                 <li>Must be different from your current password</li>
                 <li>Both new password fields must match</li>
               </ul>
-            </div>
+            </Alert>
 
-            <div className="d-flex gap-2 mt-4">
-              <button
-                type="submit"
-                className="btn btn-change-password flex-grow-1"
-                disabled={loading}
-              >
-                {loading ? "Updating..." : "Update Password"}
-              </button>
-              <button
-                type="button"
-                className="btn btn-outline-secondary flex-grow-1"
-                onClick={() => navigate("/dashboard")}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+            <Button
+              variant="primary"
+              type="submit"
+              className="w-100 mt-3"
+              disabled={loading}
+            >
+              {loading ? "Updating..." : "Update Password"}
+            </Button>
+          </Form>
+      </Card.Body>
+    </Card>
   );
 };
 

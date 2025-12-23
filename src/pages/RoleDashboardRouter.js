@@ -3,16 +3,29 @@ import { AuthContext } from '../AuthContext';
 import { Navigate, useLocation } from 'react-router-dom';
 
 const RoleDashboardRouter = () => {
-  const { activeRole } = useContext(AuthContext);
+  const { activeRole, user } = useContext(AuthContext);
   const location = useLocation();
 
-  // The activeRole from context is the single source of truth.
-  if (!activeRole) {
-    // If for some reason role is not set, redirect to login to be safe.
+  // Determine effective role
+  let role = activeRole;
+
+  // Fallback to localStorage if context is empty (page refresh)
+  if (!role) {
+    try {
+      const stored = JSON.parse(localStorage.getItem('authUser') || '{}');
+      role = stored.role;
+      if (stored.email === 'support@medverse.com') role = 'admin';
+    } catch {}
+  }
+
+  // Explicit override for support email
+  if (user && user.email === 'support@medverse.com') role = 'admin';
+
+  if (!role) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  switch (activeRole) {
+  switch (role) {
     case 'admin':
       return <Navigate to="/dashboard/admin" state={{ from: location }} replace />;
     case 'doctor':

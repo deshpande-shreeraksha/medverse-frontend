@@ -8,7 +8,6 @@ const AdminUserEditModal = ({ user, onClose, onSaved }) => {
     email: '',
     phone: '',
     role: '',
-    doctorId: '',
   });
   const [saving, setSaving] = useState(false);
 
@@ -20,7 +19,6 @@ const AdminUserEditModal = ({ user, onClose, onSaved }) => {
         email: user.email || '',
         phone: user.phone || '',
         role: user.role || 'patient',
-        doctorId: user.doctorId || '',
       });
     }
   }, [user]);
@@ -77,10 +75,6 @@ const AdminUserEditModal = ({ user, onClose, onSaved }) => {
                   <option value="doctor">doctor</option>
                   <option value="admin">admin</option>
                 </select>
-              </div>
-              <div className="mb-2">
-                <label className="form-label">Doctor ID</label>
-                <input name="doctorId" className="form-control" value={form.doctorId} onChange={handleChange} />
               </div>
             </div>
             <div className="modal-footer">
