@@ -5,6 +5,7 @@ import AdminUserList from '../components/AdminUserList';
 import AdminAppointmentsList from '../components/AdminAppointmentsList';
 import AdminReportsForm from '../components/AdminReportsForm';
 import AdminAuditList from '../components/AdminAuditList';
+import AdminFeedbacks from './AdminFeedbacks';
 
 const AdminDashboard = () => {
   const { logout } = useContext(AuthContext);
@@ -55,6 +56,14 @@ const AdminDashboard = () => {
             Audit Logs
           </button>
         </li>
+        <li className="nav-item">
+          <button 
+            className={`nav-link ${activeTab === 'feedback' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('feedback')}
+          >
+            Feedback
+          </button>
+        </li>
       </ul>
 
       {/* Tab Content */}
@@ -63,6 +72,7 @@ const AdminDashboard = () => {
         {activeTab === 'appointments' && <AdminAppointmentsList />}
         {activeTab === 'reports' && <AdminReportsForm />}
         {activeTab === 'audits' && <AdminAuditList />}
+        {activeTab === 'feedback' && <AdminFeedbacks />}
       </div>
     </div>
   );

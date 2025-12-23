@@ -19,6 +19,7 @@ import AdminUsers from "./pages/AdminUsers";
 import AdminAppointments from "./pages/AdminAppointments";
 import AdminReports from "./pages/AdminReports";
 import AdminAudits from "./pages/AdminAudits";
+import AdminFeedbacks from "./pages/AdminFeedbacks";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import DoctorSchedule from "./pages/DoctorSchedule"; // <-- Add this
 import DoctorProfile from "./pages/DoctorProfile";   // <-- Add this
@@ -78,6 +79,7 @@ function App() {
           <Route path="/dashboard/admin/appointments" element={<RoleRoute allowedRoles={["admin"]}><AdminAppointments /></RoleRoute>} />
           <Route path="/dashboard/admin/reports" element={<RoleRoute allowedRoles={["admin"]}><AdminReports /></RoleRoute>} />
           <Route path="/dashboard/admin/audits" element={<RoleRoute allowedRoles={["admin"]}><AdminAudits /></RoleRoute>} />
+          <Route path="/dashboard/admin/feedback" element={<RoleRoute allowedRoles={["admin"]}><AdminFeedbacks /></RoleRoute>} />
           <Route path="/dashboard/doctor" element={<RoleRoute allowedRoles={["doctor"]}><DoctorDashboard /></RoleRoute>} />
           <Route path="/doctor/schedule" element={<RoleRoute allowedRoles={["doctor"]}><DoctorSchedule /></RoleRoute>} />
           <Route path="/doctor/profile" element={<RoleRoute allowedRoles={["doctor"]}><DoctorProfile /></RoleRoute>} />
